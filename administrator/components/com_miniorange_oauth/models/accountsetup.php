@@ -9,13 +9,13 @@
  
 // No direct access to this file
 defined('_JEXEC') or die('Restricted access');
- 
+use Joomla\CMS\MVC\Model\AdminModel;
 /**
  * AccountSetup Model
  *
  * @since  0.0.1
  */
-class miniorangeoauthModelAccountSetup extends JModelAdmin
+class miniorangeoauthModelAccountSetup extends AdminModel
 {
 	
 	/**

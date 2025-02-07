@@ -8,7 +8,8 @@
  */
  
 defined('_JEXEC') or die('Restricted access');
- 
+use Joomla\CMS\Factory;
+
 class Mo_OAuth_Hanlder {
     public $error;
     function __construct($error='')
@@ -17,7 +18,7 @@ class Mo_OAuth_Hanlder {
     }
 
     function getAccessToken($tokenendpoint, $grant_type, $clientid, $clientsecret, $code, $redirect_url,$in_header_or_body){
-		$session = JFactory::getSession();
+		$session = Factory::getSession();
 		$ch = curl_init($tokenendpoint);
 		curl_setopt( $ch, CURLOPT_FOLLOWLOCATION, true );
 		curl_setopt( $ch, CURLOPT_ENCODING, "" );
@@ -85,7 +86,7 @@ class Mo_OAuth_Hanlder {
 		return array($access_token,$idToken);
 	}
 	function getResourceOwnerFromIdToken($id_token){
-		$session = JFactory::getSession();
+		$session = Factory::getSession();
         $id_array = explode(".", $id_token);
         if(isset($id_array[1])) {
             $id_body = base64_decode($id_array[1]);
@@ -99,7 +100,7 @@ class Mo_OAuth_Hanlder {
     }
 
 	function getResourceOwner($resourceownerdetailsurl, $access_token,$idToken){
-        $session = JFactory::getSession();
+        $session = Factory::getSession();
 		if(!empty($idToken) && !is_null($idToken)){
             return $this->getResourceOwnerFromIdToken($idToken);
         }
@@ -121,7 +122,6 @@ class Mo_OAuth_Hanlder {
 			$session->set('mo_reason',curl_error($ch));
 			return FALSE;
 		}
-		
 		$content = json_decode($content,true);
 		if(!is_array($content)){
             $this->setError("Invalid response received.");

@@ -49,8 +49,14 @@ CREATE TABLE IF NOT EXISTS `#__miniorange_oauth_config` (
 `proxy_username` VARCHAR(255),
 `proxy_password` VARCHAR(255),
 `proxy_set` VARCHAR(20),
+`password` VARCHAR(255) NOT NULL,
+`proxy_host_name` VARCHAR(255) NOT NULL,
+`port_number` VARCHAR(255) NOT NULL,
+`username` VARCHAR(255) NOT NULL,
 PRIMARY KEY (`id`)
 ) DEFAULT COLLATE=utf8_general_ci;
+
+
 
 INSERT IGNORE INTO `#__miniorange_oauth_customer`(`id`,`login_status`,`sso_var`) values (1,FALSE,'NTAK') ;
 INSERT IGNORE INTO `#__miniorange_oauth_config`(`id`,`usrlmt`) values (1,10);

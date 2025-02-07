@@ -30,11 +30,11 @@
 		<!-- Administration Menu Section -->
 		<menu link="option=com_miniorange_oauth&amp;view=accountsetup" view="accountsetup" alt="Joomla OAuth Client">COM_MINIORANGE_OAUTH_MENU</menu>
 		<submenu>
-			<menu link="option=com_miniorange_oauth&amp;view=accountsetup&amp;tab-panel=configuration">Configure OAuth</menu>
-			<menu link="option=com_miniorange_oauth&amp;view=accountsetup&amp;tab-panel=attrrolemapping">User Mapping</menu>
-			<menu link="option=com_miniorange_oauth&amp;view=accountsetup&amp;tab-panel=rolemapping">Advance Setting </menu>
+			<menu link="option=com_miniorange_oauth&amp;view=accountsetup&amp;tab-panel=configuration">COM_MINIORANGE_OAUTH_CONFIGURATION</menu>
+			<menu link="option=com_miniorange_oauth&amp;view=accountsetup&amp;tab-panel=attrrolemapping">COM_MINIORANGE_OAUTH_USER_MAPPING</menu>
+			<menu link="option=com_miniorange_oauth&amp;view=accountsetup&amp;tab-panel=rolemapping">COM_MINIORANGE_OAUTH_ADVANCED_SETTING</menu>
 			<menu link="option=com_miniorange_oauth&amp;view=accountsetup&amp;tab-panel=license">COM_MINIORANGE_OAUTH_LICENSING_PLANS</menu>
-
+            <menu link="option=com_miniorange_oauth&amp;view=accountsetup&amp;tab-panel=proxy">Proxy Setup</menu>
 		</submenu>
 		
 		<files folder="admin">
@@ -70,6 +70,28 @@
             <language tag="fr-FR">fr-FR/fr-FR.com_miniorange_oauth.sys.ini</language>
 			<language tag="it-IT">it-IT/it-IT.com_miniorange_oauth.ini</language>
             <language tag="it-IT">it-IT/it-IT.com_miniorange_oauth.sys.ini</language>
+			<language tag="cs-CZ">cs-CZ/cs-CZ.com_miniorange_oauth.ini</language>
+			<language tag="cs-CZ">cs-CZ/cs-CZ.com_miniorange_oauth.sys.ini</language>
+			<language tag="da-DK">da-DK/da-DK.com_miniorange_oauth.ini</language>
+			<language tag="da-DK">da-DK/da-DK.com_miniorange_oauth.sys.ini</language>
+			<language tag="el-GR">el-GR/el-GR.com_miniorange_oauth.ini</language>
+			<language tag="el-GR">el-GR/el-GR.com_miniorange_oauth.sys.ini</language>
+			<language tag="hu-HU">hu-HU/hu-HU.com_miniorange_oauth.ini</language>
+			<language tag="hu-HU">hu-HU/hu-HU.com_miniorange_oauth.sys.ini</language>
+			<language tag="nl-NL">nl-NL/nl-NL.com_miniorange_oauth.ini</language>
+			<language tag="nl-NL">nl-NL/nl-NL.com_miniorange_oauth.sys.ini</language>
+			<language tag="pt-BR">pt-BR/pt-BR.com_miniorange_oauth.ini</language>
+			<language tag="pt-BR">pt-BR/pt-BR.com_miniorange_oauth.sys.ini</language>
+			<language tag="sr-RS">sr-RS/sr-RS.com_miniorange_oauth.ini</language>
+			<language tag="sr-RS">sr-RS/sr-RS.com_miniorange_oauth.sys.ini</language>
+			<language tag="sr-YU">sr-YU/sr-YU.com_miniorange_oauth.ini</language>
+			<language tag="sr-YU">sr-YU/sr-YU.com_miniorange_oauth.sys.ini</language>
+			<language tag="sv-SE">sv-SE/sv-SE.com_miniorange_oauth.ini</language>
+			<language tag="sv-SE">sv-SE/sv-SE.com_miniorange_oauth.sys.ini</language>
+			<language tag="th-TH">th-TH/th-TH.com_miniorange_oauth.ini</language>
+			<language tag="th-TH">th-TH/th-TH.com_miniorange_oauth.sys.ini</language>
+			<language tag="zh-CN">zh-CN/zh-CN.com_miniorange_oauth.ini</language>
+			<language tag="zh-CN">zh-CN/zh-CN.com_miniorange_oauth.sys.ini</language>
 		</languages>
 	</administration>
 	<updateservers>

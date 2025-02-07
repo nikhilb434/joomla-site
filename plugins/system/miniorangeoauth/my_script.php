@@ -1,6 +1,8 @@
 <?php
 // No direct access to this file
 defined('_JEXEC') or die('Restricted access');
+use Joomla\CMS\Factory;
+use Joomla\CMS\Language\Text;
 
 /**
  * Script file of miniorange_oauth_system_plugin.
@@ -32,7 +34,7 @@ class plgSystemMiniorangeoauthInstallerScript
     public function install($parent) 
     {
 
-          $db  = JFactory::getDbo();
+          $db  = Factory::getDbo();
           $query = $db->getQuery(true);
           $query->update('#__extensions');
           $query->set($db->quoteName('enabled') . ' = 1');
@@ -51,7 +53,7 @@ class plgSystemMiniorangeoauthInstallerScript
      */
     public function uninstall($parent) 
     {
-        //echo '<p>' . JText::_('COM_HELLOWORLD_UNINSTALL_TEXT') . '</p>';
+        //echo '<p>' . Text::_('COM_HELLOWORLD_UNINSTALL_TEXT') . '</p>';
     }
 
     /**
@@ -63,7 +65,7 @@ class plgSystemMiniorangeoauthInstallerScript
      */
     public function update($parent) 
     {
-        //echo '<p>' . JText::sprintf('COM_HELLOWORLD_UPDATE_TEXT', $parent->get('manifest')->version) . '</p>';
+        //echo '<p>' . Text::sprintf('COM_HELLOWORLD_UPDATE_TEXT', $parent->get('manifest')->version) . '</p>';
     }
 
     /**
@@ -80,7 +82,7 @@ class plgSystemMiniorangeoauthInstallerScript
      */
     public function preflight($type, $parent) 
     {
-        //echo '<p>' . JText::_('COM_HELLOWORLD_PREFLIGHT_' . $type . '_TEXT') . '</p>';
+        //echo '<p>' . Text::_('COM_HELLOWORLD_PREFLIGHT_' . $type . '_TEXT') . '</p>';
     }
 
     /**
@@ -96,6 +98,6 @@ class plgSystemMiniorangeoauthInstallerScript
      */
     function postflight($type, $parent) 
     {
-       // echo '<p>' . JText::_('COM_HELLOWORLD_POSTFLIGHT_' . $type . '_TEXT') . '</p>';
+       // echo '<p>' . Text::_('COM_HELLOWORLD_POSTFLIGHT_' . $type . '_TEXT') . '</p>';
     }
 }

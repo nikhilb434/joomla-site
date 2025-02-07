@@ -9,13 +9,18 @@
 
 // No direct access to this file
 defined('_JEXEC') or die('Restricted access');
-JHtml::_('jquery.framework');
+use Joomla\CMS\Factory;
+use Joomla\CMS\Toolbar\ToolbarHelper;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\MVC\View\HtmlView;
+HTMLHelper::_('jquery.framework');
 /**
  * Account Setup View
  *
  * @since  0.0.1
  */
-class miniorangeoauthViewAccountSetup extends JViewLegacy
+class miniorangeoauthViewAccountSetup extends HtmlView
 {
     function display($tpl = null)
     {
@@ -26,7 +31,7 @@ class miniorangeoauthViewAccountSetup extends JViewLegacy
         // Check for errors.
         if (count($errors = $this->get('Errors')))
         {
-            JFactory::getApplication()->enqueueMessage(500, implode('<br />', $errors));
+            Factory::getApplication()->enqueueMessage(500, implode('<br />', $errors));
 
             return false;
         }
@@ -47,6 +52,6 @@ class miniorangeoauthViewAccountSetup extends JViewLegacy
      */
     protected function addToolBar()
     {
-        JToolBarHelper::title(JText::_('COM_MINIORANGE_OAUTH_PLUGIN_TITLE'),'mo_oauth_logo mo_oauth_icon');
+        ToolBarHelper::title(Text::_('COM_MINIORANGE_OAUTH_PLUGIN_TITLE'),'mo_oauth_logo mo_oauth_icon');
     }
 }

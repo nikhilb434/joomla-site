@@ -23,7 +23,8 @@ Contains Request Calls to Customer service.
 **/
 
 defined( '_JEXEC' ) or die( 'Restricted access' );
-
+use Joomla\CMS\Factory;
+use Joomla\CMS\Version;
 class MoOauthCustomer{
 	
 	public $email;
@@ -52,7 +53,7 @@ class MoOauthCustomer{
 		
 		
 		$ch = curl_init($url);
-		$current_user =  JFactory::getUser();
+		$current_user =  Factory::getUser();
 		$customer_details = MoOauthUtility::getCustomerDetails();
 		
 		$this->email = $customer_details['email'];
@@ -85,26 +86,21 @@ class MoOauthCustomer{
 		curl_setopt( $ch, CURLOPT_POST, true);
 		curl_setopt( $ch, CURLOPT_POSTFIELDS, $field_string);
 		$proxy_server = self::getConfigurationDetails();
-		$proxy_server_url = isset($proxy_server['proxy_server_url'])? $proxy_server['proxy_server_url'] : '';
-		$proxy_server_port = isset($proxy_server['proxy_server_port']) ? $proxy_server['proxy_server_port']: '';
-		$proxy_username = isset($proxy_server['proxy_username']) ? $proxy_server['proxy_username'] : '';
-		$proxy_password = isset($proxy_server['proxy_password']) ? $proxy_server['proxy_password']: '';
-		$proxy_check = isset($proxy_server['proxy_set']) ? $proxy_server['proxy_set']: '';
-		if($proxy_check == "yes")
-		{
-			curl_setopt ($ch, CURLOPT_RETURNTRANSFER, 1); 
-			curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
-			curl_setopt($ch, CURLOPT_PROXY, $proxy_server_url);
-			curl_setopt($ch, CURLOPT_PROXYPORT, $proxy_server_port);  
-			curl_setopt($ch, CURLOPT_PROXYUSERPWD, $proxy_username.':'.$proxy_password);  
-		}
+		$proxy_host_name = isset($proxy_server['proxy_host_name']) ? $proxy_server['proxy_host_name'] : '';
+        $port_number = isset($proxy_server['port_number']) ? $proxy_server['port_number'] : '';
+        $username = isset($proxy_server['username']) ? $proxy_server['username'] : '';
+        $password = isset($proxy_server['password']) ? base64_decode($proxy_server['password']) : '';
+		if (!empty($proxy_host_name)) {
+            curl_setopt($ch, CURLOPT_PROXY, $proxy_host_name);
+            curl_setopt($ch, CURLOPT_PROXYPORT, $port_number);
+            curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
+            curl_setopt($ch, CURLOPT_PROXYUSERPWD, $username . ':' . $password);
+        }
 		$content = curl_exec($ch);
-		
-		if(curl_errno($ch)){
-			echo 'Request Error:' . curl_error($ch);
-		   exit();
-		}
-		
+		if (curl_errno($ch)) {
+            echo 'Request Error:' . curl_error($ch);
+            exit();
+        }
 
 		curl_close($ch);
 		return $content;
@@ -125,9 +121,9 @@ class MoOauthCustomer{
         $timestampHeader 	= "Timestamp: " .  number_format($currentTimeInMillis, 0, '', '');
         $authorizationHeader= "Authorization: " . $hashValue;
         $fromEmail 			= $email;
-		$currentUserEmail 	= JFactory::getUser();
+		$currentUserEmail 	= Factory::getUser();
         $adminEmail         = $currentUserEmail->email;
-        $jVersion 			= new JVersion();
+        $jVersion 			= new Version();
         $phpVersion 		= phpversion();
 		$moSystemOS         = MoOauthUtility::get_operating_system();
         $jCmsVersion 		= $jVersion->getShortVersion();
@@ -175,23 +171,20 @@ class MoOauthCustomer{
         curl_setopt( $ch, CURLOPT_POST, true);
         curl_setopt( $ch, CURLOPT_POSTFIELDS, $field_string);
         $proxy_server =  self::getConfigurationDetails();
-		$proxy_server_url = isset($proxy_server['proxy_server_url'])? $proxy_server['proxy_server_url'] : '';
-		$proxy_server_port = isset($proxy_server['proxy_server_port']) ? $proxy_server['proxy_server_port']: '';
-		$proxy_username = isset($proxy_server['proxy_username']) ? $proxy_server['proxy_username'] : '';
-		$proxy_password = isset($proxy_server['proxy_password']) ? $proxy_server['proxy_password']: '';
-		$proxy_check = isset($proxy_server['proxy_set']) ? $proxy_server['proxy_set']: '';
-		if($proxy_check == "yes")
-		{
-			curl_setopt ($ch, CURLOPT_RETURNTRANSFER, 1); 
-			curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
-			curl_setopt($ch, CURLOPT_PROXY, $proxy_server_url);
-			curl_setopt($ch, CURLOPT_PROXYPORT, $proxy_server_port);  
-			curl_setopt($ch, CURLOPT_PROXYUSERPWD, $proxy_username.':'.$proxy_password);  
-		}
+		$proxy_host_name = isset($proxy_server['proxy_host_name']) ? $proxy_server['proxy_host_name'] : '';
+        $port_number = isset($proxy_server['port_number']) ? $proxy_server['port_number'] : '';
+        $username = isset($proxy_server['username']) ? $proxy_server['username'] : '';
+        $password = isset($proxy_server['password']) ? base64_decode($proxy_server['password']) : '';
+		if (!empty($proxy_host_name)) {
+            curl_setopt($ch, CURLOPT_PROXY, $proxy_host_name);
+            curl_setopt($ch, CURLOPT_PROXYPORT, $port_number);
+            curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
+            curl_setopt($ch, CURLOPT_PROXYUSERPWD, $username . ':' . $password);
+        }
 		$content = curl_exec($ch);
-
-        if(curl_errno($ch)){
-            return json_encode(array("status"=>'ERROR','statusMessage'=>curl_error($ch)));
+		if (curl_errno($ch)) {
+            echo 'Request Error:' . curl_error($ch);
+            exit();
         }
         curl_close($ch);
 
@@ -237,24 +230,21 @@ class MoOauthCustomer{
 		curl_setopt( $ch, CURLOPT_POST, true);
 		curl_setopt( $ch, CURLOPT_POSTFIELDS, $field_string);
 		$proxy_server =  self::getConfigurationDetails();
-		$proxy_server_url = isset($proxy_server['proxy_server_url'])? $proxy_server['proxy_server_url'] : '';
-		$proxy_server_port = isset($proxy_server['proxy_server_port']) ? $proxy_server['proxy_server_port']: '';
-		$proxy_username = isset($proxy_server['proxy_username']) ? $proxy_server['proxy_username'] : '';
-		$proxy_password = isset($proxy_server['proxy_password']) ? $proxy_server['proxy_password']: '';
-		$proxy_check = isset($proxy_server['proxy_set']) ? $proxy_server['proxy_set']: '';
-		if($proxy_check == "yes")
-		{
-			curl_setopt ($ch, CURLOPT_RETURNTRANSFER, 1); 
-			curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
-			curl_setopt($ch, CURLOPT_PROXY, $proxy_server_url);
-			curl_setopt($ch, CURLOPT_PROXYPORT, $proxy_server_port);  
-			curl_setopt($ch, CURLOPT_PROXYUSERPWD, $proxy_username.':'.$proxy_password);  
-		}
+		$proxy_host_name = isset($proxy_server['proxy_host_name']) ? $proxy_server['proxy_host_name'] : '';
+        $port_number = isset($proxy_server['port_number']) ? $proxy_server['port_number'] : '';
+        $username = isset($proxy_server['username']) ? $proxy_server['username'] : '';
+        $password = isset($proxy_server['password']) ? base64_decode($proxy_server['password']) : '';
+		if (!empty($proxy_host_name)) {
+            curl_setopt($ch, CURLOPT_PROXY, $proxy_host_name);
+            curl_setopt($ch, CURLOPT_PROXYPORT, $port_number);
+            curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
+            curl_setopt($ch, CURLOPT_PROXYUSERPWD, $username . ':' . $password);
+        }
 		$content = curl_exec($ch);
-		if(curl_errno($ch)){
-			echo 'Request Error:' . curl_error($ch);
-		   exit();
-		}
+		if (curl_errno($ch)) {
+            echo 'Request Error:' . curl_error($ch);
+            exit();
+        }
 		curl_close($ch);
 
 		return $content;
@@ -279,9 +269,9 @@ class MoOauthCustomer{
         $timestampHeader 	= "Timestamp: " .  number_format($currentTimeInMillis, 0, '', '');
         $authorizationHeader= "Authorization: " . $hashValue;
         $fromEmail 			= $email;
-		$currentUserEmail 	= JFactory::getUser();
+		$currentUserEmail 	= Factory::getUser();
         $adminEmail         = $currentUserEmail->email;
-        $jVersion 			= new JVersion();
+        $jVersion 			= new Version();
         $phpVersion 		= phpversion();
         $jCmsVersion 		= $jVersion->getShortVersion();
         if(class_exists("MoOAuthUtility"))
@@ -323,23 +313,20 @@ class MoOauthCustomer{
         curl_setopt( $ch, CURLOPT_POST, true);
         curl_setopt( $ch, CURLOPT_POSTFIELDS, $field_string);
         $proxy_server = self::getConfigurationDetails();
-		$proxy_server_url = isset($proxy_server['proxy_server_url'])? $proxy_server['proxy_server_url'] : '';
-		$proxy_server_port = isset($proxy_server['proxy_server_port']) ? $proxy_server['proxy_server_port']: '';
-		$proxy_username = isset($proxy_server['proxy_username']) ? $proxy_server['proxy_username'] : '';
-		$proxy_password = isset($proxy_server['proxy_password']) ? $proxy_server['proxy_password']: '';
-		$proxy_check = isset($proxy_server['proxy_set']) ? $proxy_server['proxy_set']: '';
-		if($proxy_check == "yes")
-		{
-			curl_setopt ($ch, CURLOPT_RETURNTRANSFER, 1); 
-			curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
-			curl_setopt($ch, CURLOPT_PROXY, $proxy_server_url);
-			curl_setopt($ch, CURLOPT_PROXYPORT, $proxy_server_port);  
-			curl_setopt($ch, CURLOPT_PROXYUSERPWD, $proxy_username.':'.$proxy_password);  
-		}
+		$proxy_host_name = isset($proxy_server['proxy_host_name']) ? $proxy_server['proxy_host_name'] : '';
+        $port_number = isset($proxy_server['port_number']) ? $proxy_server['port_number'] : '';
+        $username = isset($proxy_server['username']) ? $proxy_server['username'] : '';
+        $password = isset($proxy_server['password']) ? base64_decode($proxy_server['password']) : '';
+		if (!empty($proxy_host_name)) {
+            curl_setopt($ch, CURLOPT_PROXY, $proxy_host_name);
+            curl_setopt($ch, CURLOPT_PROXYPORT, $port_number);
+            curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
+            curl_setopt($ch, CURLOPT_PROXYUSERPWD, $username . ':' . $password);
+        }
 		$content = curl_exec($ch);
-        	
-        if(curl_errno($ch)){
-            return json_encode(array("status"=>'ERROR','statusMessage'=>curl_error($ch)));
+		if (curl_errno($ch)) {
+            echo 'Request Error:' . curl_error($ch);
+            exit();
         }
         curl_close($ch);
 
@@ -349,7 +336,7 @@ class MoOauthCustomer{
 
 	public static function getAccountDetails()
     {
-        $db = JFactory::getDbo();
+        $db = Factory::getDbo();
         $query = $db->getQuery(true);
         $query->select('*');
         $query->from($db->quoteName('#__miniorange_oauth_customer'));
@@ -362,7 +349,7 @@ class MoOauthCustomer{
 	
 	public static function getConfigurationDetails()
     {
-        $db = JFactory::getDbo();
+        $db = Factory::getDbo();
         $query = $db->getQuery(true);
         $query->select('*');
         $query->from($db->quoteName('#__miniorange_oauth_config'));
@@ -391,7 +378,7 @@ class MoOauthCustomer{
         $timestampHeader 	= "Timestamp: " .  number_format($currentTimeInMillis, 0, '', '');
         $authorizationHeader= "Authorization: " . $hashValue;
         $fromEmail 			= $email;
-		$currentUserEmail 	= JFactory::getUser();
+		$currentUserEmail 	= Factory::getUser();
         $adminEmail         = $currentUserEmail->email;
         $subject            = "Oauth Client[Free] for efficiency ";
         
@@ -428,24 +415,20 @@ class MoOauthCustomer{
         curl_setopt( $ch, CURLOPT_POSTFIELDS, $field_string);
         
 		$proxy_server =  self::getConfigurationDetails();
-		$proxy_server_url = isset($proxy_server['proxy_server_url'])? $proxy_server['proxy_server_url'] : '';
-		$proxy_server_port = isset($proxy_server['proxy_server_port']) ? $proxy_server['proxy_server_port']: '';
-		$proxy_username = isset($proxy_server['proxy_username']) ? $proxy_server['proxy_username'] : '';
-		$proxy_password = isset($proxy_server['proxy_password']) ? $proxy_server['proxy_password']: '';
-		$proxy_check = isset($proxy_server['proxy_set']) ? $proxy_server['proxy_set']: '';
-		if($proxy_check == "yes")
-		{
-			curl_setopt ($ch, CURLOPT_RETURNTRANSFER, 1); 
-			curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
-			curl_setopt($ch, CURLOPT_PROXY, $proxy_server_url);
-			curl_setopt($ch, CURLOPT_PROXYPORT, $proxy_server_port);  
-			curl_setopt($ch, CURLOPT_PROXYUSERPWD, $proxy_username.':'.$proxy_password);  
-		}
+		$proxy_host_name = isset($proxy_server['proxy_host_name']) ? $proxy_server['proxy_host_name'] : '';
+        $port_number = isset($proxy_server['port_number']) ? $proxy_server['port_number'] : '';
+        $username = isset($proxy_server['username']) ? $proxy_server['username'] : '';
+        $password = isset($proxy_server['password']) ? base64_decode($proxy_server['password']) : '';
+		if (!empty($proxy_host_name)) {
+            curl_setopt($ch, CURLOPT_PROXY, $proxy_host_name);
+            curl_setopt($ch, CURLOPT_PROXYPORT, $port_number);
+            curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
+            curl_setopt($ch, CURLOPT_PROXYUSERPWD, $username . ':' . $password);
+        }
 		$content = curl_exec($ch);
-        	
-        if(curl_errno($ch)){
-			
-            return;
+		if (curl_errno($ch)) {
+            echo 'Request Error:' . curl_error($ch);
+            exit();
         }
         curl_close($ch);
 
@@ -474,9 +457,9 @@ class MoOauthCustomer{
         $timestampHeader 	= "Timestamp: " .  number_format($currentTimeInMillis, 0, '', '');
         $authorizationHeader= "Authorization: " . $hashValue;
         $fromEmail 			= $q_email;
-		$currentUserEmail 	= JFactory::getUser();
+		$currentUserEmail 	= Factory::getUser();
         $adminEmail         = $currentUserEmail->email;
-        $jVersion 			= new JVersion();
+        $jVersion 			= new Version();
         $phpVersion 		= phpversion();
 		$moSystemOS         = MoOauthUtility::get_operating_system();
         $jCmsVersion 		= $jVersion->getShortVersion();
@@ -513,26 +496,21 @@ class MoOauthCustomer{
         curl_setopt( $ch, CURLOPT_POSTFIELDS, $field_string);
 
 		$proxy_server =  self::getConfigurationDetails();
-		$proxy_server_url = isset($proxy_server['proxy_server_url'])? $proxy_server['proxy_server_url'] : '';
-		$proxy_server_port = isset($proxy_server['proxy_server_port']) ? $proxy_server['proxy_server_port']: '';
-		$proxy_username = isset($proxy_server['proxy_username']) ? $proxy_server['proxy_username'] : '';
-		$proxy_password = isset($proxy_server['proxy_password']) ? $proxy_server['proxy_password']: '';
-		$proxy_check = isset($proxy_server['proxy_set']) ? $proxy_server['proxy_set']: '';
-		if($proxy_check == "yes")
-		{
-			curl_setopt ($ch, CURLOPT_RETURNTRANSFER, 1); 
-			curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
-			curl_setopt($ch, CURLOPT_PROXY, $proxy_server_url);
-			curl_setopt($ch, CURLOPT_PROXYPORT, $proxy_server_port);  
-			curl_setopt($ch, CURLOPT_PROXYUSERPWD, $proxy_username.':'.$proxy_password);  
-		}
-
+		$proxy_host_name = isset($proxy_server['proxy_host_name']) ? $proxy_server['proxy_host_name'] : '';
+        $port_number = isset($proxy_server['port_number']) ? $proxy_server['port_number'] : '';
+        $username = isset($proxy_server['username']) ? $proxy_server['username'] : '';
+        $password = isset($proxy_server['password']) ? base64_decode($proxy_server['password']) : '';
+		if (!empty($proxy_host_name)) {
+            curl_setopt($ch, CURLOPT_PROXY, $proxy_host_name);
+            curl_setopt($ch, CURLOPT_PROXYPORT, $port_number);
+            curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
+            curl_setopt($ch, CURLOPT_PROXYUSERPWD, $username . ':' . $password);
+        }
 		$content = curl_exec($ch);
-	
-		if(curl_errno($ch)){
-			echo 'Request Error:' . curl_error($ch);
-		   return false;
-		}
+		if (curl_errno($ch)) {
+            echo 'Request Error:' . curl_error($ch);
+            exit();
+        }
 		curl_close($ch);
 
 		return true;
@@ -592,26 +570,21 @@ class MoOauthCustomer{
 		curl_setopt( $ch, CURLOPT_POST, true);
 		curl_setopt( $ch, CURLOPT_POSTFIELDS, $field_string);
 		$proxy_server =  self::getConfigurationDetails();
-		$proxy_server_url = isset($proxy_server['proxy_server_url'])? $proxy_server['proxy_server_url'] : '';
-		$proxy_server_port = isset($proxy_server['proxy_server_port']) ? $proxy_server['proxy_server_port']: '';
-		$proxy_username = isset($proxy_server['proxy_username']) ? $proxy_server['proxy_username'] : '';
-		$proxy_password = isset($proxy_server['proxy_password']) ? $proxy_server['proxy_password']: '';
-		$proxy_check = isset($proxy_server['proxy_set']) ? $proxy_server['proxy_set']: '';
-		if($proxy_check == "yes")
-		{
-			curl_setopt ($ch, CURLOPT_RETURNTRANSFER, 1); 
-			curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
-			curl_setopt($ch, CURLOPT_PROXY, $proxy_server_url);
-			curl_setopt($ch, CURLOPT_PROXYPORT, $proxy_server_port);  
-			curl_setopt($ch, CURLOPT_PROXYUSERPWD, $proxy_username.':'.$proxy_password);  
-		}
-		
+		$proxy_host_name = isset($proxy_server['proxy_host_name']) ? $proxy_server['proxy_host_name'] : '';
+        $port_number = isset($proxy_server['port_number']) ? $proxy_server['port_number'] : '';
+        $username = isset($proxy_server['username']) ? $proxy_server['username'] : '';
+        $password = isset($proxy_server['password']) ? base64_decode($proxy_server['password']) : '';
+		if (!empty($proxy_host_name)) {
+            curl_setopt($ch, CURLOPT_PROXY, $proxy_host_name);
+            curl_setopt($ch, CURLOPT_PROXYPORT, $port_number);
+            curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
+            curl_setopt($ch, CURLOPT_PROXYUSERPWD, $username . ':' . $password);
+        }
 		$content = curl_exec($ch);
-
-		if(curl_errno($ch)){
-			echo 'Request Error:' . curl_error($ch);
-		   exit();
-		}
+		if (curl_errno($ch)) {
+            echo 'Request Error:' . curl_error($ch);
+            exit();
+        }
 		curl_close($ch);
 		return $content;
 	}
@@ -661,25 +634,21 @@ class MoOauthCustomer{
 		curl_setopt( $ch, CURLOPT_POSTFIELDS, $field_string);
 		
 		$proxy_server =  self::getConfigurationDetails();
-		$proxy_server_url = isset($proxy_server['proxy_server_url'])? $proxy_server['proxy_server_url'] : '';
-		$proxy_server_port = isset($proxy_server['proxy_server_port']) ? $proxy_server['proxy_server_port']: '';
-		$proxy_username = isset($proxy_server['proxy_username']) ? $proxy_server['proxy_username'] : '';
-		$proxy_password = isset($proxy_server['proxy_password']) ? $proxy_server['proxy_password']: '';
-		$proxy_check = isset($proxy_server['proxy_set']) ? $proxy_server['proxy_set']: '';
-		if($proxy_check == "yes")
-		{
-			curl_setopt ($ch, CURLOPT_RETURNTRANSFER, 1); 
-			curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
-			curl_setopt($ch, CURLOPT_PROXY, $proxy_server_url);
-			curl_setopt($ch, CURLOPT_PROXYPORT, $proxy_server_port);  
-			curl_setopt($ch, CURLOPT_PROXYUSERPWD, $proxy_username.':'.$proxy_password);  
-		}
+		$proxy_host_name = isset($proxy_server['proxy_host_name']) ? $proxy_server['proxy_host_name'] : '';
+        $port_number = isset($proxy_server['port_number']) ? $proxy_server['port_number'] : '';
+        $username = isset($proxy_server['username']) ? $proxy_server['username'] : '';
+        $password = isset($proxy_server['password']) ? base64_decode($proxy_server['password']) : '';
+		if (!empty($proxy_host_name)) {
+            curl_setopt($ch, CURLOPT_PROXY, $proxy_host_name);
+            curl_setopt($ch, CURLOPT_PROXYPORT, $port_number);
+            curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
+            curl_setopt($ch, CURLOPT_PROXYUSERPWD, $username . ':' . $password);
+        }
 		$content = curl_exec($ch);
-
-		if(curl_errno($ch)){
-			echo 'Request Error:' . curl_error($ch);
-		   exit();
-		}
+		if (curl_errno($ch)) {
+            echo 'Request Error:' . curl_error($ch);
+            exit();
+        }
 		curl_close($ch);
 		return $content;
 	}
@@ -708,24 +677,21 @@ class MoOauthCustomer{
 		curl_setopt( $ch, CURLOPT_POST, true);
 		curl_setopt( $ch, CURLOPT_POSTFIELDS, $field_string);
 		$proxy_server =  self::getConfigurationDetails();
-		$proxy_server_url = isset($proxy_server['proxy_server_url'])? $proxy_server['proxy_server_url'] : '';
-		$proxy_server_port = isset($proxy_server['proxy_server_port']) ? $proxy_server['proxy_server_port']: '';
-		$proxy_username = isset($proxy_server['proxy_username']) ? $proxy_server['proxy_username'] : '';
-		$proxy_password = isset($proxy_server['proxy_password']) ? $proxy_server['proxy_password']: '';
-		$proxy_check = isset($proxy_server['proxy_set']) ? $proxy_server['proxy_set']: '';
-		if($proxy_check == "yes")
-		{
-			curl_setopt ($ch, CURLOPT_RETURNTRANSFER, 1); 
-			curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
-			curl_setopt($ch, CURLOPT_PROXY, $proxy_server_url);
-			curl_setopt($ch, CURLOPT_PROXYPORT, $proxy_server_port);  
-			curl_setopt($ch, CURLOPT_PROXYUSERPWD, $proxy_username.':'.$proxy_password);  
-		}
-		$content = curl_exec( $ch );
-		if( curl_errno( $ch ) ){
-			echo 'Request Error:' . curl_error( $ch );
-			exit();
-		}
+		$proxy_host_name = isset($proxy_server['proxy_host_name']) ? $proxy_server['proxy_host_name'] : '';
+        $port_number = isset($proxy_server['port_number']) ? $proxy_server['port_number'] : '';
+        $username = isset($proxy_server['username']) ? $proxy_server['username'] : '';
+        $password = isset($proxy_server['password']) ? base64_decode($proxy_server['password']) : '';
+		if (!empty($proxy_host_name)) {
+            curl_setopt($ch, CURLOPT_PROXY, $proxy_host_name);
+            curl_setopt($ch, CURLOPT_PROXYPORT, $port_number);
+            curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
+            curl_setopt($ch, CURLOPT_PROXYUSERPWD, $username . ':' . $password);
+        }
+		$content = curl_exec($ch);
+		if (curl_errno($ch)) {
+            echo 'Request Error:' . curl_error($ch);
+            exit();
+        }
 		curl_close( $ch );
 
 		return $content;

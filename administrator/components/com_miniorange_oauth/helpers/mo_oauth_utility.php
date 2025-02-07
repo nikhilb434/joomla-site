@@ -21,12 +21,13 @@ This class contains all the utility functions
 
 **/
 defined( '_JEXEC' ) or die( 'Restricted access' );
+use Joomla\CMS\Factory;
 
 class MoOAuthUtility{
 
 	public static function is_customer_registered() {
 		
-		$db = JFactory::getDbo();
+		$db = Factory::getDbo();
 		$query = $db->getQuery(true);
 		$query->select('*');
 		$query->from($db->quoteName('#__miniorange_oauth_customer'));
@@ -64,7 +65,7 @@ class MoOAuthUtility{
 	}
 	
 	public static function getCustomerDetails(){
-		$db = JFactory::getDbo();
+		$db = Factory::getDbo();
 		$query = $db->getQuery(true);
 		$query->select('*');
 		$query->from($db->quoteName('#__miniorange_oauth_customer'));
@@ -77,7 +78,7 @@ class MoOAuthUtility{
 
     public static function GetPluginVersion()
     {
-        $db = JFactory::getDbo();
+        $db = Factory::getDbo();
         $dbQuery = $db->getQuery(true)
             ->select('manifest_cache')
             ->from($db->quoteName('#__extensions'))
@@ -221,5 +222,40 @@ class MoOAuthUtility{
 	
 		return 'Unknown';
 	}
+
+	public static function exportData($tableNames)
+    {
+        $db = Factory::getDbo();
+        $jsonData = [];
+
+        if (empty($tableNames)) {
+            $jsonData['error'] = 'No table names provided.';
+        } else {
+            foreach ($tableNames as $tableName) {
+                $query = $db->getQuery(true);
+                $query->select('*')
+                      ->from($db->quoteName($tableName));
+
+                $db->setQuery($query);
+                try {
+                    $data = $db->loadObjectList();
+                    
+                    if (empty($data)) {
+                        $jsonData[$tableName] = ['message' => 'This table is empty.'];
+                    } else {
+                        $jsonData[$tableName] = $data;
+                    }
+                } catch (Exception $e) {
+                    $jsonData[$tableName] = ['error' => $e->getMessage()];
+                }
+            }
+        }
+
+        header('Content-disposition: attachment; filename=exported_data.json');
+        header('Content-type: application/json');
+        echo json_encode($jsonData, JSON_PRETTY_PRINT);
+
+        Factory::getApplication()->close();
+    }
 }
 ?>

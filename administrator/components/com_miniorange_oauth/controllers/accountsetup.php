@@ -14,8 +14,12 @@
  * @since       0.0.9
  */
 defined('_JEXEC') or die('Restricted access');
+use Joomla\CMS\MVC\Controller\FormController;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Uri\Uri;
+use Joomla\CMS\Language\Text;
 
-class miniorangeoauthControllerAccountSetup extends JControllerForm
+class miniorangeoauthControllerAccountSetup extends FormController
 {
     function __construct()
     {
@@ -25,7 +29,7 @@ class miniorangeoauthControllerAccountSetup extends JControllerForm
     function customerLoginForm() {
 
 
-        $db = JFactory::getDbo();
+        $db = Factory::getDbo();
         $query = $db->getQuery(true);
         $fields = array(
             $db->quoteName('login_status') . ' = '.$db->quote(1),
@@ -46,13 +50,13 @@ class miniorangeoauthControllerAccountSetup extends JControllerForm
 
     function verifyCustomer()
     {
-        $post=	JFactory::getApplication()->input->post->getArray();
+        $post=	Factory::getApplication()->input->post->getArray();
 
         $email = '';
         $password = '';
 
         if( MoOAuthUtility::check_empty_or_null( $post['email'] ) ||MoOAuthUtility::check_empty_or_null( $post['password'] ) ) {
-            JFactory::getApplication()->enqueueMessage( 4711, 'All the fields are required. Please enter valid entries.' );
+            Factory::getApplication()->enqueueMessage( 4711, 'All the fields are required. Please enter valid entries.' );
             return;
         } else{
             $email =$post['email'];
@@ -68,18 +72,18 @@ class miniorangeoauthControllerAccountSetup extends JControllerForm
         } else if( json_last_error() == JSON_ERROR_NONE ) {
             if(isset($customerKey['id']) && isset($customerKey['apiKey']) && !empty($customerKey['id']) && !empty($customerKey['apiKey'])){
                 $this->save_customer_configurations($email,$customerKey['id'], $customerKey['apiKey'], $customerKey['token'],$customerKey['phone']);
-                $this->setRedirect('index.php?option=com_miniorange_oauth&view=accountsetup&tab-panel=license',JText::_('COM_MINIORANGE_OAUTH_ACCOUNT_RETRIEVED_SUCCESSFULLY'));
+                $this->setRedirect('index.php?option=com_miniorange_oauth&view=accountsetup&tab-panel=license',Text::_('COM_MINIORANGE_OAUTH_ACCOUNT_RETRIEVED_SUCCESSFULLY'));
             }else{
-                $this->setRedirect('index.php?option=com_miniorange_oauth&view=accountsetup&tab-panel=account',JText::_('COM_MINIORANGE_OAUTH_ERROR_FETCHING_USER_DETAILS'),'error');
+                $this->setRedirect('index.php?option=com_miniorange_oauth&view=accountsetup&tab-panel=account',Text::_('COM_MINIORANGE_OAUTH_ERROR_FETCHING_USER_DETAILS'),'error');
             }
         } else {
-            $this->setRedirect('index.php?option=com_miniorange_oauth&view=accountsetup&tab-panel=account',JText::_('COM_MINIORANGE_OAUTH_INVALID_USERNAME_PASSWORD'),'error');
+            $this->setRedirect('index.php?option=com_miniorange_oauth&view=accountsetup&tab-panel=account',Text::_('COM_MINIORANGE_OAUTH_INVALID_USERNAME_PASSWORD'),'error');
         }
     }
 
     function save_customer_configurations($email, $id, $apiKey, $token, $phone) {
 
-        $db = JFactory::getDbo();
+        $db = Factory::getDbo();
         $query = $db->getQuery(true);
         $fields = array(
             $db->quoteName('email') . ' = '.$db->quote($email),
@@ -105,8 +109,8 @@ class miniorangeoauthControllerAccountSetup extends JControllerForm
     
     function saveAdminMail()
     {
-        $post=	JFactory::getApplication()->input->post->getArray();
-        $db = JFactory::getDbo();
+        $post=	Factory::getApplication()->input->post->getArray();
+        $db = Factory::getDbo();
         $query = $db->getQuery(true);
         $fields = array(
             $db->quoteName('contact_admin_email') . ' = '.$db->quote($post['oauth_client_admin_email']),
@@ -120,13 +124,13 @@ class miniorangeoauthControllerAccountSetup extends JControllerForm
         $query->update($db->quoteName('#__miniorange_oauth_customer'))->set($fields)->where($conditions);
         $db->setQuery($query);
         $result = $db->execute();
-        $this->setRedirect('index.php?option=com_miniorange_oauth&view=accountsetup',JText::_('COM_MINIORANGE_OAUTH_ADMIN_EMAIL_CHANGED'));
+        $this->setRedirect('index.php?option=com_miniorange_oauth&view=accountsetup',Text::_('COM_MINIORANGE_OAUTH_ADMIN_EMAIL_CHANGED'));
         return;
     }
 
     function saveConfig() 
     { 
-        $post=	JFactory::getApplication()->input->post->getArray();
+        $post=	Factory::getApplication()->input->post->getArray();
         $appD = new MoOauthCustomer();
         if(count($post)==0){
             $this->setRedirect('index.php?option=com_miniorange_oauth&view=accountsetup');
@@ -140,7 +144,7 @@ class miniorangeoauthControllerAccountSetup extends JControllerForm
                 $redirectUri               = isset($post['callbackurl'])? $post['callbackurl'] : '';
                 $redirectUri               = $callbackurlhttp."".$redirectUri ;
                 $appname                   = isset($post['mo_oauth_app_name'])? $post['mo_oauth_app_name'] : '';
-                $db     = JFactory::getDbo();
+                $db     = Factory::getDbo();
                 $query  = $db->getQuery(true);
                 $fields = array(
                     $db->quoteName('appname') . ' = '.$db->quote($appname),
@@ -223,7 +227,7 @@ class miniorangeoauthControllerAccountSetup extends JControllerForm
                 $in_header_or_body ="inBody";
             }
     
-            $db     = JFactory::getDbo();
+            $db     = Factory::getDbo();
             $query  = $db->getQuery(true);
             $fields = array(
                 $db->quoteName('appname') . ' = '.$db->quote($appname),
@@ -255,7 +259,7 @@ class miniorangeoauthControllerAccountSetup extends JControllerForm
 
             $time = time();
             $c_time = date('m/d/Y H:i:s', time());
-            $db = JFactory::getDbo();
+            $db = Factory::getDbo();
             $query = $db->getQuery(true);
             $fields = array(
                 $db->quoteName('cd_plugin') . ' = '.$db->quote($time),
@@ -282,7 +286,7 @@ class miniorangeoauthControllerAccountSetup extends JControllerForm
         {
             $check_email=$c_date['contact_admin_email'];
         }
-        $base_url = JURI::root();
+        $base_url = Uri::root();
         $dno_ssos = 0;
         $tno_ssos = 0;
         $previous_update = '';
@@ -292,12 +296,12 @@ class miniorangeoauthControllerAccountSetup extends JControllerForm
     }
 
     function saveMapping(){
-        $post=	JFactory::getApplication()->input->post->getArray();
+        $post=	Factory::getApplication()->input->post->getArray();
 
         $email_attr = isset($post['mo_oauth_email_attr'])? $post['mo_oauth_email_attr'] : '';
         $first_name_attr = isset($post['mo_oauth_first_name_attr'])? $post['mo_oauth_first_name_attr'] : '';
 
-        $db = JFactory::getDbo();
+        $db = Factory::getDbo();
         $query = $db->getQuery(true);
         $fields = array(
             $db->quoteName('email_attr') . ' = '.$db->quote($email_attr),
@@ -312,11 +316,11 @@ class miniorangeoauthControllerAccountSetup extends JControllerForm
         $db->setQuery($query);
         $result = $db->execute();
 
-        $this->setRedirect('index.php?option=com_miniorange_oauth&view=accountsetup&tab-panel=configuration&progress=step4',JText::_('COM_MINIORANGE_OAUTH_ATTRIBUTE_MAPPING_SAVED_SUCCESSFULLY') );
+        $this->setRedirect('index.php?option=com_miniorange_oauth&view=accountsetup&tab-panel=configuration&progress=step4',Text::_('COM_MINIORANGE_OAUTH_ATTRIBUTE_MAPPING_SAVED_SUCCESSFULLY') );
     }
 
     function clearConfig(){
-        $post=	JFactory::getApplication()->input->post->getArray();
+        $post=	Factory::getApplication()->input->post->getArray();
 
         $clientid = "";
         $clientsecret = "";
@@ -330,7 +334,7 @@ class miniorangeoauthControllerAccountSetup extends JControllerForm
         $first_name_attr="";
         $test_attribute_name = "";
 
-        $db = JFactory::getDbo(); 
+        $db = Factory::getDbo();
         $query = $db->getQuery(true);
         $fields = array(
             $db->quoteName('appname') . ' = '.$db->quote($appname),
@@ -355,7 +359,7 @@ class miniorangeoauthControllerAccountSetup extends JControllerForm
         $db->setQuery($query);
         $result = $db->execute();
 
-        $this->setRedirect('index.php?option=com_miniorange_oauth&view=accountsetup&tab-panel=configuration',JText::_('COM_MINIORANGE_OAUTH_APP_CONFIGURATION_RESET'));
+        $this->setRedirect('index.php?option=com_miniorange_oauth&view=accountsetup&tab-panel=configuration',Text::_('COM_MINIORANGE_OAUTH_APP_CONFIGURATION_RESET'));
     }
 
     function moOAuthRegisterCustomer(){
@@ -365,29 +369,29 @@ class miniorangeoauthControllerAccountSetup extends JControllerForm
         $password = '';
         $confirmPassword = '';
 
+        $post=Factory::getApplication()->input->post->getArray();
+        $password = ($post["password"]);
+        $confirmPassword = ($post["confirmPassword"]);
 
-        $password = (JFactory::getApplication()->input->post->getArray()["password"]);
-        $confirmPassword = (JFactory::getApplication()->input->post->getArray()["confirmPassword"]);
-
-        $email=(JFactory::getApplication()->input->post->getArray()["email"]);
+        $email=($post["email"]);
 
         if( MoOAuthUtility::check_empty_or_null( $email ) || MoOAuthUtility::check_empty_or_null($password ) || MoOAuthUtility::check_empty_or_null($confirmPassword ) ) {
-            $this->setRedirect('index.php?option=com_miniorange_oauth&view=accountsetup&tab-panel=account',  JText::_('COM_MINIORANGE_OAUTH_ALL_FIELDS_REQUIRED_TO_REGISTER'),'error');
+            $this->setRedirect('index.php?option=com_miniorange_oauth&view=accountsetup&tab-panel=account',  Text::_('COM_MINIORANGE_OAUTH_ALL_FIELDS_REQUIRED_TO_REGISTER'),'error');
             return;
         } else if( strlen( $password ) < 6 || strlen( $confirmPassword ) < 6){	
-            $this->setRedirect('index.php?option=com_miniorange_oauth&view=accountsetup&tab-panel=account',  JText::_('COM_MINIORANGE_OAUTH_ENTER_PASSWORD_OF_MIN_LENGTH'),'error');
+            $this->setRedirect('index.php?option=com_miniorange_oauth&view=accountsetup&tab-panel=account',  Text::_('COM_MINIORANGE_OAUTH_ENTER_PASSWORD_OF_MIN_LENGTH'),'error');
             return;
         } else{
-            $email = JFactory::getApplication()->input->post->getArray()["email"];
+            $email = $post["email"];
             $email = strtolower($email);
-            $phone = JFactory::getApplication()->input->post->getArray()["phone"];
-            $password =JFactory::getApplication()->input->post->getArray()["password"];
-            $confirmPassword = JFactory::getApplication()->input->post->getArray()["confirmPassword"];
+            $phone = $post["phone"];
+            $password = $post["password"];
+            $confirmPassword = $post["confirmPassword"];
         }
 
         if( strcmp( $password, $confirmPassword) == 0 ) {
 
-            $db = JFactory::getDbo();
+            $db = Factory::getDbo();
             $query = $db->getQuery(true);
             $fields = array(
                 $db->quoteName('email') . ' = ' . $db->quote($email),
@@ -411,7 +415,7 @@ class miniorangeoauthControllerAccountSetup extends JControllerForm
                 $content = json_decode($customer->send_otp_token($auth_type, $email), true);
                 if(strcasecmp($content['status'], 'SUCCESS') == 0) {
 
-                    $db = JFactory::getDbo();
+                    $db = Factory::getDbo();
                     $query = $db->getQuery(true);
                     $fields = array(
                         $db->quoteName('email_count') . ' = ' . $db->quote(1),
@@ -427,12 +431,12 @@ class miniorangeoauthControllerAccountSetup extends JControllerForm
                     $db->setQuery($query);
                     $result = $db->execute();
 
-                    $this->setRedirect('index.php?option=com_miniorange_oauth&view=accountsetup&tab-panel=account', JText::_('COM_MINIORANGE_OAUTH_ONE_TIME_PASSWORD_SENT1') . $email . JText::_('COM_MINIORANGE_OAUTH_ONE_TIME_PASSWORD_SENT2'));
+                    $this->setRedirect('index.php?option=com_miniorange_oauth&view=accountsetup&tab-panel=account', Text::_('COM_MINIORANGE_OAUTH_ONE_TIME_PASSWORD_SENT1') . $email . Text::_('COM_MINIORANGE_OAUTH_ONE_TIME_PASSWORD_SENT2'));
 
 
                 } else {
 
-                    $db = JFactory::getDbo();
+                    $db = Factory::getDbo();
                     $query = $db->getQuery(true);
                     $fields = array(
                         $db->quoteName('login_status') . ' = ' . $db->quote(0),
@@ -446,13 +450,13 @@ class miniorangeoauthControllerAccountSetup extends JControllerForm
                     $db->setQuery($query);
                     $result = $db->execute();
 
-                    $this->setRedirect('index.php?option=com_miniorange_oauth&view=accountsetup&tab-panel=account',JText::_('COM_MINIORANGE_OAUTH_ERROR_SENDING_EMAIL'),'error');
+                    $this->setRedirect('index.php?option=com_miniorange_oauth&view=accountsetup&tab-panel=account',Text::_('COM_MINIORANGE_OAUTH_ERROR_SENDING_EMAIL'),'error');
 
 
                 }
             } else if( strcasecmp( $content['status'], 'CURL_ERROR') == 0 ){
 
-                $db = JFactory::getDbo();
+                $db = Factory::getDbo();
                 $query = $db->getQuery(true);
                 $fields = array(
                     $db->quoteName('login_status') . ' = ' . $db->quote(0),
@@ -473,9 +477,9 @@ class miniorangeoauthControllerAccountSetup extends JControllerForm
                 $customerKey = json_decode($content, true);
                 if(json_last_error() == JSON_ERROR_NONE) {
                     $this->save_customer_configurations($email,$customerKey['id'], $customerKey['apiKey'], $customerKey['token'], $customerKey['phone']);
-                    $this->setRedirect('index.php?option=com_miniorange_oauth&view=accountsetup&tab-panel=license', JText::_('COM_MINIORANGE_OAUTH_ACCOUNT_RETRIEVED_SUCCESSFULLY'));
+                    $this->setRedirect('index.php?option=com_miniorange_oauth&view=accountsetup&tab-panel=license', Text::_('COM_MINIORANGE_OAUTH_ACCOUNT_RETRIEVED_SUCCESSFULLY'));
                 } else {
-                    $db = JFactory::getDbo();
+                    $db = Factory::getDbo();
                     $query = $db->getQuery(true);
                     $fields = array(
                         $db->quoteName('login_status') . ' = ' . $db->quote(1),
@@ -489,13 +493,13 @@ class miniorangeoauthControllerAccountSetup extends JControllerForm
                     $db->setQuery($query);
                     $result = $db->execute();
 
-                    $this->setRedirect('index.php?option=com_miniorange_oauth&view=accountsetup&tab-panel=account', JText::_('COM_MINIORANGE_OAUTH_ENTER_VALID_PASSWORD'),'error');
+                    $this->setRedirect('index.php?option=com_miniorange_oauth&view=accountsetup&tab-panel=account', Text::_('COM_MINIORANGE_OAUTH_ENTER_VALID_PASSWORD'),'error');
 
                 }
             }
 
         } else {
-            $db = JFactory::getDbo();
+            $db = Factory::getDbo();
             $query = $db->getQuery(true);
             $fields = array(
                 $db->quoteName('login_status') . ' = ' . $db->quote(0)
@@ -506,22 +510,22 @@ class miniorangeoauthControllerAccountSetup extends JControllerForm
             $query->update($db->quoteName('#__miniorange_oauth_customer'))->set($fields)->where($conditions);
             $db->setQuery($query);
             $result = $db->execute();
-            $this->setRedirect('index.php?option=com_miniorange_oauth&view=accountsetup&tab-panel=account', JText::_('COM_MINIORANGE_OAUTH_PASSWORD_MISMATCH'),'error');
+            $this->setRedirect('index.php?option=com_miniorange_oauth&view=accountsetup&tab-panel=account', Text::_('COM_MINIORANGE_OAUTH_PASSWORD_MISMATCH'),'error');
         }
     }
 
     function validateOtp(){
 
-        $otp_token =JFactory::getApplication()->input->post->getArray()["otp_token"];
+        $otp_token =Factory::getApplication()->input->post->getArray()["otp_token"];
 
         if( MoOAuthUtility::check_empty_or_null( $otp_token) ) {
-            $this->setRedirect('index.php?option=com_miniorange_oauth&view=accountsetup&tab-panel=account', JText::_('COM_MINIORANGE_OAUTH_ENTER_A_VALID_OTP'),'error');
+            $this->setRedirect('index.php?option=com_miniorange_oauth&view=accountsetup&tab-panel=account', Text::_('COM_MINIORANGE_OAUTH_ENTER_A_VALID_OTP'),'error');
             return;
         } else{
-            $otp_token =  JFactory::getApplication()->input->post->getArray()['otp_token'] ;
+            $otp_token =  Factory::getApplication()->input->post->getArray()['otp_token'] ;
         }
 
-        $db = JFactory::getDbo();
+        $db = Factory::getDbo();
         $query = $db->getQuery(true); 
         $query->select('transaction_id');
         $query->from($db->quoteName('#__miniorange_oauth_customer'));
@@ -535,7 +539,7 @@ class miniorangeoauthControllerAccountSetup extends JControllerForm
         if(strcasecmp($content['status'], 'SUCCESS') == 0) {
             $customerKey = json_decode($customer->create_customer(), true);
 
-            $db = JFactory::getDbo();
+            $db = Factory::getDbo();
             $query = $db->getQuery(true);
             $fields = array(
                 $db->quoteName('email_count') . ' = ' . $db->quote(0),
@@ -552,9 +556,9 @@ class miniorangeoauthControllerAccountSetup extends JControllerForm
                 $customerKey = json_decode($content, true);
                 if(json_last_error() == JSON_ERROR_NONE) {
                     $this->save_customer_configurations($customerKey['email'], $customerKey['id'], $customerKey['apiKey'], $customerKey['token'], $customerKey['phone']);
-                    $this->setRedirect('index.php?option=com_miniorange_oauth&view=accountsetup', JText::_('COM_MINIORANGE_OAUTH_ACCOUNT_RETRIEVED_SUCCESSFULLY'));
+                    $this->setRedirect('index.php?option=com_miniorange_oauth&view=accountsetup', Text::_('COM_MINIORANGE_OAUTH_ACCOUNT_RETRIEVED_SUCCESSFULLY'));
                 } else {
-                    $db = JFactory::getDbo();
+                    $db = Factory::getDbo();
                     $query = $db->getQuery(true);
                     $fields = array(
                         $db->quoteName('login_status') . ' = ' . $db->quote(1),
@@ -568,16 +572,16 @@ class miniorangeoauthControllerAccountSetup extends JControllerForm
                     $db->setQuery($query);
                     $result = $db->execute();
 
-                    $this->setRedirect('index.php?option=com_miniorange_oauth&view=accountsetup&tab-panel=account', JText::_('COM_MINIORANGE_OAUTH_ENTER_VALID_PASSWORD'),'error');
+                    $this->setRedirect('index.php?option=com_miniorange_oauth&view=accountsetup&tab-panel=account', Text::_('COM_MINIORANGE_OAUTH_ENTER_VALID_PASSWORD'),'error');
 
                 }
             } else if(strcasecmp($customerKey['status'], 'SUCCESS') == 0) {
 
                 $this->save_customer_configurations($customerKey['email'], $customerKey['id'], $customerKey['apiKey'], $customerKey['token'],$customerKey[' phone']);
-                $this->setRedirect('index.php?option=com_miniorange_oauth&view=accountsetup&tab-panel=license',JText::_('COM_MINIORANGE_OAUTH_THANK_YOU_FOR_REGISTERING_WITH_MINIORANGE_MESSSAGE'));
+                $this->setRedirect('index.php?option=com_miniorange_oauth&view=accountsetup&tab-panel=license',Text::_('COM_MINIORANGE_OAUTH_THANK_YOU_FOR_REGISTERING_WITH_MINIORANGE_MESSSAGE'));
             }else if(strcasecmp($customerKey['status'],'INVALID_EMAIL_QUICK_EMAIL')==0){
 
-                $db = JFactory::getDbo();
+                $db = Factory::getDbo();
                 $query = $db->getQuery(true);
                 $fields = array(
                     $db->quoteName('registration_status') . ' = ' . $db->quote(''),
@@ -593,12 +597,12 @@ class miniorangeoauthControllerAccountSetup extends JControllerForm
                 $db->setQuery($query);
                 $result = $db->execute();
 
-                $this->setRedirect('index.php?option=com_miniorange_oauth&view=accountsetup&tab-panel=account',JText::_('COM_MINIORANGE_OAUTH_ERROR_CREATING_YOUR_ACCOUNT'),'error');
+                $this->setRedirect('index.php?option=com_miniorange_oauth&view=accountsetup&tab-panel=account',Text::_('COM_MINIORANGE_OAUTH_ERROR_CREATING_YOUR_ACCOUNT'),'error');
 
             }
             
         } else if( strcasecmp( $content['status'], 'CURL_ERROR') == 0) {
-            $db = JFactory::getDbo();
+            $db = Factory::getDbo();
             $query = $db->getQuery(true);
             $fields = array(
                 $db->quoteName('registration_status') . ' = ' . $db->quote('MO_OTP_VALIDATION_FAILURE')
@@ -613,7 +617,7 @@ class miniorangeoauthControllerAccountSetup extends JControllerForm
             $this->setRedirect('index.php?option=com_miniorange_oauth&view=accountsetup&tab-panel=account', $content['statusMessage'],'error');
 
         } else {
-            $db = JFactory::getDbo();
+            $db = Factory::getDbo();
             $query = $db->getQuery(true);
             $fields = array(
                 $db->quoteName('registration_status') . ' = ' . $db->quote('MO_OTP_VALIDATION_FAILURE')
@@ -625,7 +629,7 @@ class miniorangeoauthControllerAccountSetup extends JControllerForm
             $query->update($db->quoteName('#__miniorange_oauth_customer'))->set($fields)->where($conditions);
             $db->setQuery($query);
             $result = $db->execute();
-            $this->setRedirect('index.php?option=com_miniorange_oauth&view=accountsetup&tab-panel=account',JText::_('COM_MINIORANGE_OAUTH_INVALID_OTP'),'error');
+            $this->setRedirect('index.php?option=com_miniorange_oauth&view=accountsetup&tab-panel=account',Text::_('COM_MINIORANGE_OAUTH_INVALID_OTP'),'error');
 
         }
     }
@@ -636,7 +640,7 @@ class miniorangeoauthControllerAccountSetup extends JControllerForm
         $customer = new MoOauthCustomer();
         $auth_type = 'EMAIL';
 
-        $db = JFactory::getDbo();
+        $db = Factory::getDbo();
         $query = $db->getQuery(true);
         $query->select('email');
         $query->from($db->quoteName('#__miniorange_oauth_customer'));
@@ -655,7 +659,7 @@ class miniorangeoauthControllerAccountSetup extends JControllerForm
             if($email_count != '' && $email_count >= 1){
                 $email_count = $email_count + 1;
 
-                $db = JFactory::getDbo();
+                $db = Factory::getDbo();
                 $query = $db->getQuery(true);
                 $fields = array(
                     $db->quoteName('email_count') . ' = ' . $db->quote($email_count),
@@ -670,10 +674,10 @@ class miniorangeoauthControllerAccountSetup extends JControllerForm
                 $db->setQuery($query);
                 $result = $db->execute();
 
-                $this->setRedirect('index.php?option=com_miniorange_oauth&view=accountsetup&tab-panel=account', JText::_('COM_MINIORANGE_OAUTH_ANOTHER_ONE_TIME_PASSWORD_SENT1'). ( $admin_email) . JText::_('COM_MINIORANGE_OAUTH_ANOTHER_ONE_TIME_PASSWORD_SENT2'));
+                $this->setRedirect('index.php?option=com_miniorange_oauth&view=accountsetup&tab-panel=account', Text::_('COM_MINIORANGE_OAUTH_ANOTHER_ONE_TIME_PASSWORD_SENT1'). ( $admin_email) . Text::_('COM_MINIORANGE_OAUTH_ANOTHER_ONE_TIME_PASSWORD_SENT2'));
 
             }else{
-                $db = JFactory::getDbo();
+                $db = Factory::getDbo();
                 $query = $db->getQuery(true);
                 $fields = array(
                     $db->quoteName('email_count') . ' = ' . $db->quote(1),
@@ -687,13 +691,13 @@ class miniorangeoauthControllerAccountSetup extends JControllerForm
                 $query->update($db->quoteName('#__miniorange_oauth_customer'))->set($fields)->where($conditions);
                 $db->setQuery($query);
                 $result = $db->execute();
-                $this->setRedirect('index.php?option=com_miniorange_oauth&view=accountsetup&tab-panel=account',  JText::_('COM_MINIORANGE_OAUTH_ONE_TIME_PASSWORD_SENT1'). ($admin_email) . JText::_('COM_MINIORANGE_OAUTH_ONE_TIME_PASSWORD_SENT2'));
+                $this->setRedirect('index.php?option=com_miniorange_oauth&view=accountsetup&tab-panel=account',  Text::_('COM_MINIORANGE_OAUTH_ONE_TIME_PASSWORD_SENT1'). ($admin_email) . Text::_('COM_MINIORANGE_OAUTH_ONE_TIME_PASSWORD_SENT2'));
 
             }
 
         } else if( strcasecmp( $content['status'], 'CURL_ERROR') == 0) {
 
-            $db = JFactory::getDbo();
+            $db = Factory::getDbo();
             $query = $db->getQuery(true);
             $fields = array(
                 $db->quoteName('registration_status') . ' = ' . $db->quote('MO_OTP_DELIVERED_FAILURE')
@@ -708,7 +712,7 @@ class miniorangeoauthControllerAccountSetup extends JControllerForm
             $this->setRedirect('index.php?option=com_miniorange_oauth&view=accountsetup&tab-panel=account',  $content['statusMessage'],'error');
 
         } else{
-            $db = JFactory::getDbo();
+            $db = Factory::getDbo();
             $query = $db->getQuery(true);
             $fields = array(
                 $db->quoteName('registration_status') . ' = ' . $db->quote('MO_OTP_DELIVERED_FAILURE')
@@ -720,13 +724,13 @@ class miniorangeoauthControllerAccountSetup extends JControllerForm
             $query->update($db->quoteName('#__miniorange_oauth_customer'))->set($fields)->where($conditions);
             $db->setQuery($query);
             $result = $db->execute();
-            $this->setRedirect('index.php?option=com_miniorange_oauth&view=accountsetup&tab-panel=account', JText::_('COM_MINIORANGE_OAUTH_ERROR_SENDING_EMAIL'),'error');
+            $this->setRedirect('index.php?option=com_miniorange_oauth&view=accountsetup&tab-panel=account', Text::_('COM_MINIORANGE_OAUTH_ERROR_SENDING_EMAIL'),'error');
 
         }
     }
 
     function cancelform(){
-        $db = JFactory::getDbo();
+        $db = Factory::getDbo();
         $query = $db->getQuery(true);
         $fields = array(
             $db->quoteName('email') . ' = ' . $db->quote(''),
@@ -754,7 +758,7 @@ class miniorangeoauthControllerAccountSetup extends JControllerForm
     }
 
     function phoneVerification(){
-        $phone = JFactory::getApplication()->input->post->getArray()['phone_number'];
+        $phone = Factory::getApplication()->input->post->getArray()['phone_number'];
         $phone = str_replace(' ', '', $phone);
 
         $pattern = "/[\+][0-9]{1,3}[0-9]{10}/";
@@ -765,7 +769,7 @@ class miniorangeoauthControllerAccountSetup extends JControllerForm
             $send_otp_response = json_decode($customer->send_otp_token($auth_type, $phone));
             if($send_otp_response->status == 'SUCCESS'){
 
-                $db = JFactory::getDbo();
+                $db = Factory::getDbo();
                 $query = $db->getQuery(true);
                 $query->select('sms_count');
                 $query->from($db->quoteName('#__miniorange_oauth_customer'));
@@ -776,7 +780,7 @@ class miniorangeoauthControllerAccountSetup extends JControllerForm
 
                 if($sms_count != '' && $sms_count >= 1){
                     $sms_count = $sms_count + 1;
-                    $db = JFactory::getDbo();
+                    $db = Factory::getDbo();
                     $query = $db->getQuery(true);
                     $fields = array(
                         $db->quoteName('sms_count') . ' = ' . $db->quote($sms_count),
@@ -790,11 +794,11 @@ class miniorangeoauthControllerAccountSetup extends JControllerForm
                     $db->setQuery($query);
                     $result = $db->execute();
 
-                    $this->setRedirect('index.php?option=com_miniorange_oauth&view=accountsetup&tab-panel=account', JText::_('COM_MINIORANGE_OAUTH_OTP_SENT1') . $sms_count .JText::_('COM_MINIORANGE_OAUTH_OTP_SENT2'). $phone);
+                    $this->setRedirect('index.php?option=com_miniorange_oauth&view=accountsetup&tab-panel=account', Text::_('COM_MINIORANGE_OAUTH_OTP_SENT1') . $sms_count .Text::_('COM_MINIORANGE_OAUTH_OTP_SENT2'). $phone);
 
 
                 } else{
-                    $db = JFactory::getDbo();
+                    $db = Factory::getDbo();
                     $query = $db->getQuery(true);
                     $fields = array(
                         $db->quoteName('sms_count') . ' = ' . $db->quote(1),
@@ -807,21 +811,21 @@ class miniorangeoauthControllerAccountSetup extends JControllerForm
                     $query->update($db->quoteName('#__miniorange_oauth_customer'))->set($fields)->where($conditions);
                     $db->setQuery($query);
                     $result = $db->execute();
-                    $this->setRedirect('index.php?option=com_miniorange_oauth&view=accountsetup&tab-panel=account', JText::_('COM_MINIORANGE_OAUTH_ONE_TIME_PASSWORD_FOR_VERIFICATION'). $phone);
+                    $this->setRedirect('index.php?option=com_miniorange_oauth&view=accountsetup&tab-panel=account', Text::_('COM_MINIORANGE_OAUTH_ONE_TIME_PASSWORD_FOR_VERIFICATION'). $phone);
                 }
 
             } else{
-                $this->setRedirect('index.php?option=com_miniorange_oauth&view=accountsetup&tab-panel=account', JText::_('COM_MINIORANGE_OAUTH_ERROR_WHILE_SENDING_OTP'));
+                $this->setRedirect('index.php?option=com_miniorange_oauth&view=accountsetup&tab-panel=account', Text::_('COM_MINIORANGE_OAUTH_ERROR_WHILE_SENDING_OTP'));
             }
         }else{
 
-            $this->setRedirect('index.php?option=com_miniorange_oauth&view=accountsetup&tab-panel=account',JText::_('COM_MINIORANGE_OAUTH_ENTER_PHONE_NUMBER_IN_CORRECT_FORMAT'),'error');
+            $this->setRedirect('index.php?option=com_miniorange_oauth&view=accountsetup&tab-panel=account',Text::_('COM_MINIORANGE_OAUTH_ENTER_PHONE_NUMBER_IN_CORRECT_FORMAT'),'error');
         }
     }
 
     function requestForDemoPlan()
     {
-        $post=	JFactory::getApplication()->input->post->getArray();
+        $post=	Factory::getApplication()->input->post->getArray();
         if(count($post)==0){
             $this->setRedirect('index.php?option=com_miniorange_oauth&view=accountsetup&tab-panel=support');
             return;
@@ -837,12 +841,12 @@ class miniorangeoauthControllerAccountSetup extends JControllerForm
         $response = json_decode($customer->request_for_demo($email, $plan, $description, $demo_trial));
 
         if($response->status != 'ERROR')
-            $this->setRedirect('index.php?option=com_miniorange_oauth&view=accountsetup&tab-panel=support', JText::_('COM_MINIORANGE_OAUTH_YOUR_QUERY_IS_SUBMITTED'));
+            $this->setRedirect('index.php?option=com_miniorange_oauth&view=accountsetup&tab-panel=support', Text::_('COM_MINIORANGE_OAUTH_YOUR_QUERY_IS_SUBMITTED'));
         else
-            $this->setRedirect('index.php?option=com_miniorange_oauth&view=accountsetup&tab-panel=support', JText::_('COM_MINIORANGE_OAUTH_AN_ERROR_OCCURRED'), 'error');
+            $this->setRedirect('index.php?option=com_miniorange_oauth&view=accountsetup&tab-panel=support', Text::_('COM_MINIORANGE_OAUTH_AN_ERROR_OCCURRED'), 'error');
     }
     function callContactUs() {
-        $post = JFactory::getApplication()->input->post->getArray();
+        $post = Factory::getApplication()->input->post->getArray();
         if(count($post)==0){
             $this->setRedirect('index.php?option=com_miniorange_oauth&view=accountsetup&tab-panel=support');
             return;
@@ -853,7 +857,7 @@ class miniorangeoauthControllerAccountSetup extends JControllerForm
         $callDate    =$post['mo_oauth_setup_call_date'];
         $timeZone    =$post['mo_oauth_setup_call_timezone'];
         if( MoOAuthUtility::check_empty_or_null( $timeZone ) ||MoOAuthUtility::check_empty_or_null( $callDate ) ||MoOAuthUtility::check_empty_or_null( $query_email ) || MoOAuthUtility::check_empty_or_null( $query)||MoOAuthUtility::check_empty_or_null( $description) ) {
-            $this->setRedirect('index.php?option=com_miniorange_oauth&view=accountsetup', JText::_('COM_MINIORANGE_OAUTH_ENTER_ALL_FIELDS_TO_SETUP_A_CALL'), 'error');
+            $this->setRedirect('index.php?option=com_miniorange_oauth&view=accountsetup', Text::_('COM_MINIORANGE_OAUTH_ENTER_ALL_FIELDS_TO_SETUP_A_CALL'), 'error');
             return;
         } else{
             $contact_us = new MoOauthCustomer();
@@ -863,9 +867,9 @@ class miniorangeoauthControllerAccountSetup extends JControllerForm
                     $this->setRedirect('index.php?option=com_miniorange_oauth&view=accountsetup&tab-panel=support', $submited['message'],'error');
                 }else{
                     if ( $submited == false ) {
-                        $this->setRedirect('index.php?option=com_miniorange_oauth&view=accountsetup&tab-panel=support', JText::_('COM_MINIORANGE_OAUTH_YOUR_QUERY_COULD_NOT_BE_SUBMITTED'),'error');
+                        $this->setRedirect('index.php?option=com_miniorange_oauth&view=accountsetup&tab-panel=support', Text::_('COM_MINIORANGE_OAUTH_YOUR_QUERY_COULD_NOT_BE_SUBMITTED'),'error');
                     } else {
-                        $this->setRedirect('index.php?option=com_miniorange_oauth&view=accountsetup&tab-panel=support', JText::_('COM_MINIORANGE_OAUTH_YOUR_QUERY_IS_SUBMITTED'));
+                        $this->setRedirect('index.php?option=com_miniorange_oauth&view=accountsetup&tab-panel=support', Text::_('COM_MINIORANGE_OAUTH_YOUR_QUERY_IS_SUBMITTED'));
                     }
                 }
             }
@@ -873,7 +877,7 @@ class miniorangeoauthControllerAccountSetup extends JControllerForm
         }
     }
     function contactUs() {
-        $post = JFactory::getApplication()->input->post->getArray();
+        $post = Factory::getApplication()->input->post->getArray();
         if(count($post)==0){
             $this->setRedirect('index.php?option=com_miniorange_oauth&view=accountsetup&tab-panel=support');
             return;
@@ -894,7 +898,7 @@ class miniorangeoauthControllerAccountSetup extends JControllerForm
 
 
         if( MoOAuthUtility::check_empty_or_null( $query_email ) || MoOAuthUtility::check_empty_or_null( $query) ) {
-            $this->setRedirect('index.php?option=com_miniorange_oauth&view=accountsetup&tab-panel=support', JText::_('COM_MINIORANGE_OAUTH_SUBMIT_QUERY_WITH_EMAIL'), 'error');
+            $this->setRedirect('index.php?option=com_miniorange_oauth&view=accountsetup&tab-panel=support', Text::_('COM_MINIORANGE_OAUTH_SUBMIT_QUERY_WITH_EMAIL'), 'error');
             return;
         } else{
             $contact_us = new MoOauthCustomer();
@@ -904,9 +908,9 @@ class miniorangeoauthControllerAccountSetup extends JControllerForm
                     $this->setRedirect('index.php?option=com_miniorange_oauth&view=accountsetup&tab-panel=support', $submited['message'],'error');
                 }else{
                     if ( $submited == false ) {
-                        $this->setRedirect('index.php?option=com_miniorange_oauth&view=accountsetup&tab-panel=support', JText::_('COM_MINIORANGE_OAUTH_YOUR_QUERY_COULD_NOT_BE_SUBMITTED'),'error');
+                        $this->setRedirect('index.php?option=com_miniorange_oauth&view=accountsetup&tab-panel=support', Text::_('COM_MINIORANGE_OAUTH_YOUR_QUERY_COULD_NOT_BE_SUBMITTED'),'error');
                     } else {
-                        $this->setRedirect('index.php?option=com_miniorange_oauth&view=accountsetup&tab-panel=support', JText::_('COM_MINIORANGE_OAUTH_YOUR_QUERY_IS_SUBMITTED'));
+                        $this->setRedirect('index.php?option=com_miniorange_oauth&view=accountsetup&tab-panel=support', Text::_('COM_MINIORANGE_OAUTH_YOUR_QUERY_IS_SUBMITTED'));
                     }
                 }
             }
@@ -931,10 +935,10 @@ class miniorangeoauthControllerAccountSetup extends JControllerForm
             'sms_count'           => 0, 
         );
         $this->updateDatabaseQuery($nameOfDatabase, $updateFieldsArray);
-        $this->setRedirect('index.php?option=com_miniorange_oauth&view=accountsetup&tab-panel=account', JText::_('COM_MINIORANGE_OAUTH_ACCOUNT_REMOVED_SUCCESSFULLY'));
+        $this->setRedirect('index.php?option=com_miniorange_oauth&view=accountsetup&tab-panel=account', Text::_('COM_MINIORANGE_OAUTH_ACCOUNT_REMOVED_SUCCESSFULLY'));
     }
     function updateDatabaseQuery($database_name, $updatefieldsarray){
-        $db = JFactory::getDbo();
+        $db = Factory::getDbo();
         $query = $db->getQuery(true);
         foreach ($updatefieldsarray as $key => $value)
         {
@@ -954,7 +958,7 @@ class miniorangeoauthControllerAccountSetup extends JControllerForm
 
         if($clientid =='' && $clientsecret =='')
         {
-			$this->setRedirect('index.php?option=com_miniorange_oauth&view=accountsetup', JText::_('COM_MINIORANGE_OAUTH_ENTER_CLIENT_ID_BEFORE_DOWNLOADING'), 'error');
+			$this->setRedirect('index.php?option=com_miniorange_oauth&view=accountsetup', Text::_('COM_MINIORANGE_OAUTH_ENTER_CLIENT_ID_BEFORE_DOWNLOADING'), 'error');
 			return;
         }
 
@@ -968,12 +972,12 @@ class miniorangeoauthControllerAccountSetup extends JControllerForm
 		header('Content-Type: application/json'); 
 		print_r($filecontentd);
 
-        $this->setRedirect('index.php?option=com_miniorange_oauth&view=accountsetup',JText::_('COM_MINIORANGE_OAUTH_PLUGIN_CONFIGURATION_DOWNLOADED_SUCCESSFULLY') );
+        $this->setRedirect('index.php?option=com_miniorange_oauth&view=accountsetup',Text::_('COM_MINIORANGE_OAUTH_PLUGIN_CONFIGURATION_DOWNLOADED_SUCCESSFULLY') );
         exit;
     }
 
     function retrieveAttributes($tablename){
-        $db = JFactory::getDbo();
+        $db = Factory::getDbo();
         $query = $db->getQuery(true);
         $query->select('*');
         $query->from($db->quoteName($tablename));
@@ -988,12 +992,12 @@ class miniorangeoauthControllerAccountSetup extends JControllerForm
         $updateFieldsArray = array('proxy_server_url' => '', 'proxy_server_port' => '80', 'proxy_username' => '', 'proxy_password' => '', 'proxy_set' => '');
 		
         $this->updateDatabaseQuery($nameOfDatabase, $updateFieldsArray);
-        $this->setRedirect('index.php?option=com_miniorange_oauth&view=accountsetup&tab-panel=account', JText::_('COM_MINIORANGE_OAUTH_PROXY_SETTING_RESET'));
+        $this->setRedirect('index.php?option=com_miniorange_oauth&view=accountsetup&tab-panel=account', Text::_('COM_MINIORANGE_OAUTH_PROXY_SETTING_RESET'));
     }
 
     function moOAuthProxyServer(){
 
-		$post=	JFactory::getApplication()->input->post->getArray();
+		$post=	Factory::getApplication()->input->post->getArray();
 		$proxy_server_url = isset($post['proxy_server_url'])? $post['proxy_server_url'] : '';
 		$proxy_server_port = isset($post['proxy_server_port'])? $post['proxy_server_port'] : '';
 		$proxy_username = isset($post['proxy_username'])? $post['proxy_username'] : '';
@@ -1008,7 +1012,50 @@ class miniorangeoauthControllerAccountSetup extends JControllerForm
 			'proxy_set'               => 'yes',
 		);
 
-        $this->updateDatabaseQuery($nameOfDatabase, $updateFieldsArray);
-		$this->setRedirect('index.php?option=com_miniorange_oauth&view=accountsetup&tab-panel=account', JText::_('COM_MINIORANGE_OAUTH_PROXY_SERVER_SAVED_SUCCESSFULLY'));
+        $this->updateDatabaseQuery('#__miniorange_oauth_config', $updateFieldsArray);
+		$this->setRedirect('index.php?option=com_miniorange_oauth&view=accountsetup&tab-panel=account', Text::_('COM_MINIORANGE_OAUTH_PROXY_SERVER_SAVED_SUCCESSFULLY'));
 	}
+
+    function proxyConfig()
+    {
+        $post = JFactory::getApplication()->input->post->getArray();
+        $proxy_host_name = isset($post['mo_proxy_host']) ? $post['mo_proxy_host'] : '';
+        $proxy_port_number = isset($post['mo_proxy_port']) ? $post['mo_proxy_port'] : '';
+        $proxy_username = isset($post['mo_proxy_username']) ? $post['mo_proxy_username'] : '';
+        $proxy_password = isset($post['mo_proxy_password']) ? base64_encode($post['mo_proxy_password'] ): '';
+        $updateFieldsArray = array(
+            'proxy_host_name' => $proxy_host_name,
+            'port_number'     => $proxy_port_number,
+            'username'        => $proxy_username,
+            'password'        => $proxy_password,
+        );
+
+            $this->updateDatabaseQuery('#__miniorange_oauth_config', $updateFieldsArray);
+            $this->setRedirect('index.php?option=com_miniorange_oauth&view=accountsetup&tab-panel=proxy', JText::_('COM_MINIORANGE_OAUTH_PROXY_SERVER_SAVED_SUCCESSFULLY'));
+    }
+    function proxyConfigReset()
+    {
+        $updateFieldsArray = array(
+        'proxy_host_name' => '',
+        'port_number'     => '',
+        'username'        => '',
+        'password'        => ''
+        );
+
+           $this->updateDatabaseQuery('#__miniorange_oauth_config', $updateFieldsArray);
+           $this->setRedirect('index.php?option=com_miniorange_oauth&view=accountsetup&tab-panel=proxy', JText::_('COM_MINIORANGE_OAUTH_PROXY_SETTING_RESET'));
+}
+    public function exportConfig()
+    {
+        // Define single or multiple table names here
+        $tableNames = [
+            '#__miniorange_oauth_customer',
+            '#__miniorange_oauth_config',
+        ];
+
+        // Include the helper file
+        require_once JPATH_COMPONENT . '/helpers/mo_oauth_utility.php';
+
+        MoOAuthUtility::exportData($tableNames);
+    }
 }

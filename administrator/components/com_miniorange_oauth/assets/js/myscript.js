@@ -1,4 +1,3 @@
-
 function add_css_tab(element) {
     jQuery(".mo_nav_tab_active").removeClass("mo_nav_tab_active").removeClass("active");
     jQuery(element).addClass("mo_nav_tab_active");
@@ -12,7 +11,7 @@ function copyToClipboard(element) {
     temp.remove();
 }
 
-function copyToClipboardAppend(element1 , element2) { 
+function copyToClipboard(element1 , element2) { 
     var temp = jQuery("<input>");
     jQuery("body").append(temp);
 	$value = jQuery(element2).val()+jQuery(element1).val();
@@ -36,14 +35,11 @@ function validateEmail(emailField)
     }
 }
 
-
 jQuery(document).ready(function () {
     jQuery('.premium').click(function () {
         jQuery('.nav-tabs a[href=#licensing-plans]').tab('show');
     });
 });
-
-
 
 function upgradeBtn()
 {
@@ -90,8 +86,7 @@ window.addEventListener('DOMContentLoaded', function(){
         supportForms[i].style.right= "-391px";
     }
  });
-}
-//  
+} 
 
 let appSearchInput = document.getElementById('moAuthAppsearchInput');
 let moAuthAppsTable = document.getElementById('moAuthAppsTable');
@@ -127,3 +122,56 @@ appSearchInput.onkeyup=function(e){
 	};
 }
 );
+
+/*removed internal js*/
+function closeModel(){
+	jQuery(".TC_modal").css("display","none");
+}
+function show_TC_modal(){
+	jQuery(".TC_modal").css("display","block");
+}
+function callbackURLFormSubmit()
+{
+	jQuery("#oauth_config_form_step1").submit();
+}
+function submitOAuthConfigForm()
+{
+	jQuery("#oauth_config_form_step2").submit();
+}
+
+function changeSubMenu(element0,element1)
+{
+	jQuery(".mo_sub_menu_active").removeClass("mo_sub_menu_active");
+	jQuery(element0).addClass("mo_sub_menu_active");
+	jQuery(element1).nextAll('div').css('display', 'none');
+	jQuery(element1).prevAll().css('display', 'none');
+	jQuery(element1).css("display", "block");
+}
+jQuery(document).ready(function(){
+	var dtToday = new Date();
+	var month = dtToday.getMonth() + 1;
+	var day = dtToday.getDate();
+	var year = dtToday.getFullYear();
+	if(month < 10)
+		month = '0' + month.toString();
+	if(day < 10)
+		day = '0' + day.toString();
+	var maxDate = year + '-' + month + '-' + day;
+	
+	jQuery('#calldate').attr('min', maxDate);
+});
+
+function show_TC_modal(){
+	jQuery(".TC_modal").css("display","block");
+}
+
+function displayFileName() {
+	var fileInput = document.getElementById('fileInput');
+	var file = fileInput.files[0];
+
+	if (file && file.name.endsWith('.json')) {
+		document.getElementById('fileName').textContent = file.name; 
+	} else {
+		document.getElementById('fileName').textContent = "Please select a .json file.";
+	}
+}

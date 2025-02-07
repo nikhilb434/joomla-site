@@ -1,6 +1,7 @@
 <?php
 // No direct access to this file
 defined('_JEXEC') or die('Restricted access');
+use Joomla\CMS\Language\Text;
 
 /**
  * Script file of miniorange_oauth_plugin.
@@ -32,7 +33,7 @@ class pkg_oauthclientInstallerScript
      */
     public function uninstall($parent) 
     {
-        //echo '<p>' . JText::_('COM_HELLOWORLD_UNINSTALL_TEXT') . '</p>';
+        //echo '<p>' . Text::_('COM_HELLOWORLD_UNINSTALL_TEXT') . '</p>';
     }
 
     /**
@@ -44,7 +45,7 @@ class pkg_oauthclientInstallerScript
      */
     public function update($parent) 
     {
-        //echo '<p>' . JText::sprintf('COM_HELLOWORLD_UPDATE_TEXT', $parent->get('manifest')->version) . '</p>';
+        //echo '<p>' . Text::sprintf('COM_HELLOWORLD_UPDATE_TEXT', $parent->get('manifest')->version) . '</p>';
     }
 
     /**
@@ -61,7 +62,7 @@ class pkg_oauthclientInstallerScript
      */
     public function preflight($type, $parent) 
     {
-        //echo '<p>' . JText::_('COM_HELLOWORLD_PREFLIGHT_' . $type . '_TEXT') . '</p>';
+        //echo '<p>' . Text::_('COM_HELLOWORLD_PREFLIGHT_' . $type . '_TEXT') . '</p>';
     }
 
     /**
@@ -77,7 +78,7 @@ class pkg_oauthclientInstallerScript
      */
     function postflight($type, $parent) 
     {
-       // echo '<p>' . JText::_('COM_HELLOWORLD_POSTFLIGHT_' . $type . '_TEXT') . '</p>';
+       // echo '<p>' . Text::_('COM_HELLOWORLD_POSTFLIGHT_' . $type . '_TEXT') . '</p>';
        if ($type == 'uninstall') {
         return true;
         }
@@ -88,28 +89,56 @@ class pkg_oauthclientInstallerScript
         ?>
         <style>
         
-	.mo-row {
-		width: 100%;
-		display: block;
-		margin-bottom: 2%;
-	}
+        .mo-row {
+            width: 100%;
+            display: block;
+            margin-bottom: 2%;
+        }
+    
+        .mo-row:after {
+            clear: both;
+            display: block;
+            content: "";
+        }
 
-	.mo-row:after {
-		clear: both;
-		display: block;
-		content: "";
-	}
+        .btn {
+        display: inline-block;
+        font-weight: 300;
+        text-align: center;
+        vertical-align: middle;
+        user-select: none;
+        background-color: transparent;
+        border: 1px solid transparent;
+        padding: 4px 12px;
+        font-size: 0.85rem;
+        line-height: 1.5;
+        border-radius: 0.25rem;
+        transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+        } 
+       
+        .btn-cstm {
+        background: #001b4c;
+        border: none;
+        font-size: 1.1rem;
+        padding: 0.3rem 1.5rem;
+        color: #fff !important;
+        cursor: pointer;
+      }
+            
+            /* Dark background button styles */
+            :root[data-color-scheme=dark] {
+                .btn-cstm {
+                    color: white;
+                    background-color: #000000;
+                    border-color:1px solid #ffffff; 
+                }
 
-	.mo-column-2 {
-		width: 19%;
-		margin-right: 1%;
-		float: left;
-	}
-
-	.mo-column-10 {
-		width: 80%;
-		float: left;
-	}
+                .btn-cstm:hover {
+                    background-color: #000000;
+                    border-color: #ffffff; 
+                }
+            }
+		
     </style>
    
     <h3>Steps to use the OAuth Client plugin.</h3>
@@ -119,9 +148,9 @@ class pkg_oauthclientInstallerScript
     <li>You can start configuring.</li>
     </ul>
     	<div class="mo-row">
-            <a class="btn btn-secondary" style="background-color: #46a546; color : white"  href="index.php?option=com_miniorange_oauth&view=accountsetup&tab-panel=configuration">Start Using miniOrange OAuth Client plugin</a>
-            <a class="btn btn-secondary" style="background-color: #46a546; color : white" href="https://plugins.miniorange.com/guide-to-enable-joomla-oauth-client" target="_blank">Read the miniOrange documents</a>
-		    <a class="btn btn-secondary" style="background-color: #46a546; color : white" href="https://www.miniorange.com/contact" target="_blank">Get Support!</a>
+            <a class="btn btn-cstm"  href="index.php?option=com_miniorange_oauth&view=accountsetup&tab-panel=configuration">Start Using miniOrange OAuth Client plugin</a>
+            <a class="btn btn-cstm"  href="https://plugins.miniorange.com/guide-to-enable-joomla-oauth-client" target="_blank">Read the miniOrange documents</a>
+		    <a class="btn btn-cstm"  href="https://www.miniorange.com/contact" target="_blank">Get Support!</a>
         </div>
         <?php
     }
