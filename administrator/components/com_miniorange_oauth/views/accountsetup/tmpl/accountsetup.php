@@ -744,6 +744,13 @@ function configuration($OauthApp,$appLabel)
             <hr class="mo_oauth_bg_black">
             <div class="row m-0 p-0">
                 <div  class="col-sm-12 m-0 p-0">
+                    <div onclick = "changeSubMenu(this,'#mo_advance_setting')" class="mo_sub_menu">
+                        <span><?php echo Text::_('COM_MINIORANGE_OAUTH_ADVANCE_SETTINGS');?></span>
+                    </div>
+                </div>
+            </div>
+            <div class="row m-0 p-0">
+                <div  class="col-sm-12 m-0 p-0">
                     <div onclick = "changeSubMenu(this,'#mo_importexport_setting')" class="mo_sub_menu">
                         <span><?php echo Text::_('COM_MINIORANGE_OAUTH_IMPORT');?></span>
                     </div>
@@ -1267,7 +1274,6 @@ function configuration($OauthApp,$appLabel)
             <div class="row m-1 my-3 mo_oauth_display-none" id="mo_premium_feature">
                 <div class="col-sm-12">
                     <h5 class="element"> <?php echo Text::_('COM_MINIORANGE_OAUTH_ADD_FEATURES'); ?>
-
                         <a href="https://developers.miniorange.com/docs/oauth-joomla/overview-oauth" target="_blank" class="mo_handbook" ><sup><i class="fa-regular fa-circle-question" title="Know more about premium feature"></i></sup></a>
                     </h5>
                     <hr>
@@ -1333,6 +1339,31 @@ function configuration($OauthApp,$appLabel)
                     </div><br>
                 </div>
             </div>
+
+            <div class="row m-1 my-3 mo_oauth_display-none" id="mo_advance_setting">
+                <div class="col-sm-12">
+                    <h5 class="element"> <?php echo Text::_('COM_MINIORANGE_OAUTH_ADVANCE_SETTINGS'); ?>
+                    <a href="https://developers.miniorange.com/docs/oauth-joomla/overview-oauth" target="_blank" class="mo_handbook" ><sup><i class="fa-regular fa-circle-question" title="Know more about premium feature"></i></sup></a>
+                    </h5>
+                    <hr>
+                </div>
+                <div class="col-sm-12">
+                    <div class="row">
+                        <div class="col-sm-5">
+                            <strong><?php echo Text::_('SSO Enable / Disable '); ?></strong>:
+                        </div>
+                        <div class="col-sm-7">
+                            <div class="form-check form-switch">
+                                <label id="mo_sso_switch">
+                                    <input class="form-check-input" type="checkbox" id="ssoToggle"/>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
             <div class="row m-1 my-3 mo_oauth_display-none" id="mo_importexport_setting">
                 <div class="col-sm-12">
                     <?php moImportAndExport()?>
@@ -3123,6 +3154,7 @@ function moImportAndExport()
     </div>
     <?php
 }
+
 
 function exportConfiguration(){
     ?>
