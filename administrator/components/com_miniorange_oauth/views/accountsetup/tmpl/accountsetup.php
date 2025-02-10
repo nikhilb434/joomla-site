@@ -636,6 +636,7 @@ function configuration($OauthApp,$appLabel)
     $attribute = getAppDetails();
     $appJson = json_decode(getAppJason(),true);
     $appData = json_decode(getAppData(),true);
+
     if($appJson[$appLabel]["guide"]!="")
     {
         $guide=$appJson[$appLabel]["guide"];
@@ -705,8 +706,9 @@ function configuration($OauthApp,$appLabel)
         $step3Check = empty($email_attr)?FALSE:TRUE;
         $redirecturi = explode('//',Uri::root())[1];
         $attributesNames = explode(",",$attributesNames);
-
     }
+    echo "/n printing attribute = ";
+    var_dump($attribute);
     $get =Factory::getApplication()->input->get->getArray();
     $progress = isset($get['progress'])?$get['progress']:"step1";
     ?>
@@ -1297,7 +1299,7 @@ function configuration($OauthApp,$appLabel)
                         </div>
                         <div class="col-sm-7">
                             <div class="form-check form-switch">
-                                <label id=" mo_oauth_switch">
+                                <label id="mo_oauth_switch">
                                     <input class="form-check-input" type="checkbox" disabled/>
                                 </label>
                             </div>
@@ -1350,19 +1352,18 @@ function configuration($OauthApp,$appLabel)
                 <div class="col-sm-12">
                     <div class="row">
                         <div class="col-sm-5">
-                            <strong><?php echo Text::_('SSO Enable / Disable '); ?></strong>:
+                            <strong><?php echo Text::_('COM_MINIORANGE_OAUTH_SSO_ENABLE'); ?></strong>:
                         </div>
                         <div class="col-sm-7">
                             <div class="form-check form-switch">
-                                <label id="mo_sso_switch">
-                                    <input class="form-check-input" type="checkbox" id="ssoToggle"/>
+                                <label id=" mo_oauth_switch">
+                                    <input class="form-check-input" type="checkbox" value="0"  name="mo_oauth_enable_sso" id="mo_oauth_enable_sso"/>
                                 </label>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-
 
             <div class="row m-1 my-3 mo_oauth_display-none" id="mo_importexport_setting">
                 <div class="col-sm-12">

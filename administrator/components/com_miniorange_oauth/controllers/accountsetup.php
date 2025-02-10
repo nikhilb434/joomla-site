@@ -132,6 +132,10 @@ class miniorangeoauthControllerAccountSetup extends FormController
     { 
         $post=	Factory::getApplication()->input->post->getArray();
         $appD = new MoOauthCustomer();
+
+        echo "\n Printing post in saveConfig() : ";
+        var_dump($post);
+
         if(count($post)==0){
             $this->setRedirect('index.php?option=com_miniorange_oauth&view=accountsetup');
             return;
@@ -254,6 +258,9 @@ class miniorangeoauthControllerAccountSetup extends FormController
         }
         
         $c_date = MoOauthCustomer::getAccountDetails();
+        
+        echo "\n getAccountDetails() in accountsetup.php = ";
+        var_dump($c_date);
 
         if($c_date['cd_plugin']==''){
 
@@ -1057,5 +1064,10 @@ class miniorangeoauthControllerAccountSetup extends FormController
         require_once JPATH_COMPONENT . '/helpers/mo_oauth_utility.php';
 
         MoOAuthUtility::exportData($tableNames);
+    }
+
+    public function advanceSetting()
+    {
+        
     }
 }

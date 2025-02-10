@@ -53,6 +53,7 @@ CREATE TABLE IF NOT EXISTS `#__miniorange_oauth_config` (
 `proxy_host_name` VARCHAR(255) NOT NULL,
 `port_number` VARCHAR(255) NOT NULL,
 `username` VARCHAR(255) NOT NULL,
+`sso_enable` INT(255) NOT NULL,
 PRIMARY KEY (`id`)
 ) DEFAULT COLLATE=utf8_general_ci;
 
