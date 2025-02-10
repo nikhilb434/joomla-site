@@ -656,6 +656,7 @@ function configuration($OauthApp,$appLabel)
     $mo_oauth_in_header = "checked=true";
     $mo_oauth_in_body   = "";
     $login_link_check="1";
+    $sso_enable = isset($attribute['sso_enable']) ? $attribute['sso_enable'] : '1';
     if(isset($attribute['in_header_or_body']))
     {
         if( $attribute['in_header_or_body']=='inBody' ){
@@ -707,8 +708,8 @@ function configuration($OauthApp,$appLabel)
         $redirecturi = explode('//',Uri::root())[1];
         $attributesNames = explode(",",$attributesNames);
     }
-    echo "/n printing attribute = ";
-    var_dump($attribute);
+    // echo "/n printing attribute = ";
+    // var_dump($attribute);
     $get =Factory::getApplication()->input->get->getArray();
     $progress = isset($get['progress'])?$get['progress']:"step1";
     ?>
@@ -940,7 +941,7 @@ function configuration($OauthApp,$appLabel)
                                                     <input class="form-control" placeholder="<?php echo Text::_('COM_MINIORANGE_OAUTH_AUTHORIZE_ENDPOINT_PLACEHOLDER');?>" type="text" id="mo_oauth_authorizeurl" name="mo_oauth_authorizeurl" value='<?php echo $appJson[$appLabel]["authorize"] ?>' required>
                                                 </div>
                                                 <div class="col-sm-1">
-                                                    <em class="fa fa-pull-right fa-lg fa-copy mo_copy copytooltip mo_oauth_copy_btn" ; onclick="copyToClipboard('#mo_oauth_authorizeurl');";>
+                                                    <em class="fa fa-pull-right fa-lg fa-copy mo_copy copytooltip mo_oauth_copy_btn" ; onclick="copyToClipboard1('#mo_oauth_authorizeurl');";>
                                                         <span class="copytooltiptext"><?php echo Text::_('COM_MINIORANGE_OAUTH_COPIED');?></span>
                                                     </em>
                                                 </div>
@@ -953,7 +954,7 @@ function configuration($OauthApp,$appLabel)
                                                     <input class="form-control" placeholder="<?php echo Text::_('COM_MINIORANGE_OAUTH_TOKEN_ENDPOINT_PLACEHOLDER');?>" type="text" id="mo_oauth_accesstokenurl" name="mo_oauth_accesstokenurl" value='<?php echo $appJson[$appLabel]['token']; ?>' required>
                                                 </div>
                                                 <div class="col-sm-1">
-                                                    <em class="fa fa-pull-right fa-lg fa-copy mo_copy copytooltip mo_oauth_copy_btn" onclick="copyToClipboard('#mo_oauth_accesstokenurl');";>
+                                                    <em class="fa fa-pull-right fa-lg fa-copy mo_copy copytooltip mo_oauth_copy_btn" onclick="copyToClipboard1('#mo_oauth_accesstokenurl');";>
                                                         <span class="copytooltiptext"><?php echo Text::_('COM_MINIORANGE_OAUTH_COPIED');?></span>
                                                     </em>
                                                 </div>
@@ -968,7 +969,7 @@ function configuration($OauthApp,$appLabel)
                                                             <input class="form-control" placeholder="<?php echo Text::_('COM_MINIORANGE_OAUTH_INFO_ENDPOINT_PLACEHOLDER');?>" type="text" id="mo_oauth_resourceownerdetailsurl" name="mo_oauth_resourceownerdetailsurl" value='<?php echo $appJson[$appLabel]['userinfo']; ?>' required>
                                                         </div>
                                                         <div class="col-sm-1">
-                                                            <em class="fa fa-pull-right fa-lg fa-copy mo_copy copytooltip mo_oauth_copy_btn" onclick="copyToClipboard('#mo_oauth_resourceownerdetailsurl');";>
+                                                            <em class="fa fa-pull-right fa-lg fa-copy mo_copy copytooltip mo_oauth_copy_btn" onclick="copyToClipboard1('#mo_oauth_resourceownerdetailsurl');";>
                                                                 <span class="copytooltiptext"><?php echo Text::_('COM_MINIORANGE_OAUTH_COPIED');?></span>
                                                             </em>
                                                         </div>
@@ -994,7 +995,7 @@ function configuration($OauthApp,$appLabel)
                                                 <input class="form-control" type="text" id="mo_oauth_authorizeurl" name="mo_oauth_authorizeurl" value='<?php echo $authorize_endpoint; ?>' required>
                                             </div>
                                             <div class="col-sm-1">
-                                                <em class="fa fa-pull-right fa-lg fa-copy mo_copy copytooltip mo_oauth_copy_btn" ; onclick="copyToClipboard('#mo_oauth_authorizeurl');";>
+                                                <em class="fa fa-pull-right fa-lg fa-copy mo_copy copytooltip mo_oauth_copy_btn" ; onclick="copyToClipboard1('#mo_oauth_authorizeurl');";>
                                                     <span class="copytooltiptext"><?php echo Text::_('COM_MINIORANGE_OAUTH_COPIED');?></span>
                                                 </em>
                                             </div>
@@ -1007,7 +1008,7 @@ function configuration($OauthApp,$appLabel)
                                                 <input class="form-control" type="text" id="mo_oauth_accesstokenurl" name="mo_oauth_accesstokenurl" value='<?php echo $access_token_endpoint; ?>' required>
                                             </div>
                                             <div class="col-sm-1">
-                                                <em class="fa fa-pull-right fa-lg fa-copy mo_copy copytooltip mo_oauth_copy_btn" onclick="copyToClipboard('#mo_oauth_accesstokenurl');";>
+                                                <em class="fa fa-pull-right fa-lg fa-copy mo_copy copytooltip mo_oauth_copy_btn" onclick="copyToClipboard1('#mo_oauth_accesstokenurl');";>
                                                     <span class="copytooltiptext"><?php echo Text::_('COM_MINIORANGE_OAUTH_COPIED');?></span>
                                                 </em>
                                             </div>
@@ -1022,7 +1023,7 @@ function configuration($OauthApp,$appLabel)
                                                         <input class="form-control" type="text" id="mo_oauth_resourceownerdetailsurl" name="mo_oauth_resourceownerdetailsurl" value='<?php echo $user_info_endpoint; ?>' required>
                                                     </div>
                                                     <div class="col-sm-1">
-                                                        <em class="fa fa-pull-right fa-lg fa-copy mo_copy copytooltip mo_oauth_copy_btn" onclick="copyToClipboard('#mo_oauth_resourceownerdetailsurl');";>
+                                                        <em class="fa fa-pull-right fa-lg fa-copy mo_copy copytooltip mo_oauth_copy_btn" onclick="copyToClipboard1('#mo_oauth_resourceownerdetailsurl');";>
                                                             <span class="copytooltiptext"><?php echo Text::_('COM_MINIORANGE_OAUTH_COPIED');?></span>
                                                         </em>
                                                     </div>
@@ -1193,7 +1194,7 @@ function configuration($OauthApp,$appLabel)
                             <input class="form-control" id="loginUrl" type="text" readonly="true" value='<?php echo Uri::root() . '?morequest=oauthredirect&app_name=' . $mo_oauth_app; ?>'>
                         </div>
                         <div class="col-sm-1">
-                            <em class="fa fa-pull-right fa-lg fa-copy mo_copy copytooltip mo_oauth_copy_btn" onclick="copyToClipboard('#loginUrl');";>
+                            <em class="fa fa-pull-right fa-lg fa-copy mo_copy copytooltip mo_oauth_copy_btn" onclick="copyToClipboard1('loginUrl');";>
                                 <span class="copytooltiptext"><?php echo Text::_('COM_MINIORANGE_OAUTH_COPIED'); ?></span>
                             </em>
                         </div>
@@ -1343,27 +1344,39 @@ function configuration($OauthApp,$appLabel)
             </div>
 
             <div class="row m-1 my-3 mo_oauth_display-none" id="mo_advance_setting">
-                <div class="col-sm-12">
-                    <h5 class="element"> <?php echo Text::_('COM_MINIORANGE_OAUTH_ADVANCE_SETTINGS'); ?>
-                    <a href="https://developers.miniorange.com/docs/oauth-joomla/overview-oauth" target="_blank" class="mo_handbook" ><sup><i class="fa-regular fa-circle-question" title="Know more about premium feature"></i></sup></a>
-                    </h5>
-                    <hr>
-                </div>
-                <div class="col-sm-12">
-                    <div class="row">
-                        <div class="col-sm-5">
-                            <strong><?php echo Text::_('COM_MINIORANGE_OAUTH_SSO_ENABLE'); ?></strong>:
-                        </div>
-                        <div class="col-sm-7">
-                            <div class="form-check form-switch">
-                                <label id=" mo_oauth_switch">
-                                    <input class="form-check-input" type="checkbox" value="0"  name="mo_oauth_enable_sso" id="mo_oauth_enable_sso"/>
-                                </label>
+                <form method="POST" action="<?php echo Route::_('index.php?option=com_miniorange_oauth&view=accountsetup&task=accountsetup.enableSSO'); ?>">
+                    <div class="col-sm-12">
+                        <h5 class="element"> 
+                            <?php echo Text::_('COM_MINIORANGE_OAUTH_ADVANCE_SETTINGS'); ?>
+                            <a href="https://developers.miniorange.com/docs/oauth-joomla/overview-oauth" 
+                               target="_blank" class="mo_handbook">
+                                <sup><i class="fa-regular fa-circle-question" title="Know more about premium feature"></i></sup>
+                            </a>
+                        </h5>
+                        <hr>
+                    </div>
+
+                    <div class="col-sm-12">
+                        <div class="row">
+                            <div class="col-sm-5">
+                                <strong><?php echo Text::_('COM_MINIORANGE_OAUTH_SSO_ENABLE'); ?></strong>:
+                            </div>
+                            <div class="col-sm-7">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" value="1" name="mo_oauth_enable_sso" 
+                                           id="mo_oauth_enable_sso" <?php echo ($sso_enable ? 'checked' : ''); ?> />
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
+
+                    <!-- Submit Button -->
+                    <div class="col-sm-12 mt-3">
+                        <button type="submit" class="btn btn-primary">Save Changes</button>
+                    </div>
+                </form>
             </div>
+
 
             <div class="row m-1 my-3 mo_oauth_display-none" id="mo_importexport_setting">
                 <div class="col-sm-12">
@@ -3188,4 +3201,6 @@ function exportConfiguration(){
 </div>
     <?php
 }
+
+
 ?>

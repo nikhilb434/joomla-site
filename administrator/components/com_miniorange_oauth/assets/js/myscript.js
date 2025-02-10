@@ -3,12 +3,16 @@ function add_css_tab(element) {
     jQuery(element).addClass("mo_nav_tab_active");
 }
 
-function copyToClipboard(element) { 
+function copyToClipboard1(element) { 
     var temp = jQuery("<input>");
     jQuery("body").append(temp);
     temp.val(jQuery(element).val()).select();
     document.execCommand("copy");
     temp.remove();
+
+    var copyText = document.getElementById(element);
+    copyText.select();
+    navigator.clipboard.writeText(copyText.value);
 }
 
 function copyToClipboard(element1 , element2) { 
@@ -175,3 +179,5 @@ function displayFileName() {
 		document.getElementById('fileName').textContent = "Please select a .json file.";
 	}
 }
+
+

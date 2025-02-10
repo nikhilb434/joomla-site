@@ -256,6 +256,8 @@ class miniorangeoauthControllerAccountSetup extends FormController
             $returnURL  = 'index.php?option=com_miniorange_oauth&view=accountsetup&moAuthAddApp='.$post['mo_oauth_app_name'].'&progress=step3';
             $errMessage = 'Your configuration completed successfully! Now, proceed to Step 3 to configure the basic attribute mapping';
         }
+
+
         
         $c_date = MoOauthCustomer::getAccountDetails();
         
@@ -299,6 +301,7 @@ class miniorangeoauthControllerAccountSetup extends FormController
         $previous_update = '';
         $present_update = '';
         MoOauthCustomer::plugin_efficiency_check($check_email,$appname,$base_url, $c_time, $dno_ssos, $tno_ssos, $previous_update, $present_update,'NA', $scope, $authorizeurl, $accesstokenurl, $resourceownerdetailsurl, $in_header_or_body);
+
         $this->setRedirect($returnURL,$errMessage );
     }
 
@@ -1051,7 +1054,8 @@ class miniorangeoauthControllerAccountSetup extends FormController
 
            $this->updateDatabaseQuery('#__miniorange_oauth_config', $updateFieldsArray);
            $this->setRedirect('index.php?option=com_miniorange_oauth&view=accountsetup&tab-panel=proxy', JText::_('COM_MINIORANGE_OAUTH_PROXY_SETTING_RESET'));
-}
+    }
+
     public function exportConfig()
     {
         // Define single or multiple table names here
@@ -1066,8 +1070,22 @@ class miniorangeoauthControllerAccountSetup extends FormController
         MoOAuthUtility::exportData($tableNames);
     }
 
-    public function advanceSetting()
+    public function enableSSO()
     {
-        
+        $post = JFactory::getApplication()->input->post->getArray();
+
+        $sso_status = isset($post['mo_oauth_enable_sso']) ? 1 : 0;
+
+        $updateFieldsArray = array(
+            'sso_enable' => $sso_status
+        );
+
+        $messg = "SSO" . ($sso_status ? " enable " : " disable ") . "successfully.";
+
+        $this->updateDatabaseQuery('#__miniorange_oauth_config', $updateFieldsArray);
+
+        $this->setRedirect('index.php?option=com_miniorange_oauth&view=accountsetup&tab-panel=configuration', 
+            JText::_($messg));
     }
+
 }

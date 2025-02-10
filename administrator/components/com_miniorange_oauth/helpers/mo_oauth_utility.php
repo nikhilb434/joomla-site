@@ -257,5 +257,7 @@ class MoOAuthUtility{
 
         Factory::getApplication()->close();
     }
+
+    
 }
 ?>

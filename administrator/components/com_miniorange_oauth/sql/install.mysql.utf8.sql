@@ -20,8 +20,7 @@ CREATE TABLE IF NOT EXISTS `#__miniorange_oauth_customer` (
 `sso_var` VARCHAR(255) NOT NULL,
 `sso_test` VARCHAR(255) NOT NULL,
 `contact_admin_email` VARCHAR(255) DEFAULT NULL,
-
-
+`enable_sso` int(11),
 PRIMARY KEY (`id`)
 ) DEFAULT COLLATE=utf8_general_ci;
 

@@ -44,6 +44,7 @@ class plgSystemMiniorangeoauth extends JPlugin
                 {
                     $linkAddPlace="</button><br><a href = ".JURI::root()."?morequest=oauthredirect&app_name=".$applicationName."> Click Here For SSO ";
                     $body = str_replace('</button>', $linkAddPlace . '</a>', $body);
+                    var_dump($body);
                     $app->setBody($body);           
                 }
             }
@@ -124,6 +125,7 @@ class plgSystemMiniorangeoauth extends JPlugin
             $result=$app->redirect(JRoute::_(JURI::root() . '?morequest=oauthredirect&app_name=' . urlencode($mo_oauth_app_name) . '&test=true'));
         }
 
+
         /*-------------------------OAuth SSO starts with this if-----------*/
         /*            Opening of OAuth server dialog box
                      Step 1 of Oauth/OpenID flow
@@ -131,6 +133,18 @@ class plgSystemMiniorangeoauth extends JPlugin
         else if (isset($get['morequest']) and $get['morequest'] == 'oauthredirect') 
         {
             $appname = $get['app_name'];
+            var_dump($get);
+           
+            $appdata = $this->miniOauthFetchDb('#__miniorange_oauth_config', array('custom_app'=>$appname));
+            var_dump($appdata);
+            if($appdata['sso_enable'] == 0)
+            {
+                var_dump("Inside the redirection");
+                $app->redirect(JURI::root());
+                return;
+            }
+
+            // die();
             if (isset($get['test']))
                 setcookie("mo_oauth_test", true);
             else
