@@ -133,9 +133,6 @@ class miniorangeoauthControllerAccountSetup extends FormController
         $post=	Factory::getApplication()->input->post->getArray();
         $appD = new MoOauthCustomer();
 
-        echo "\n Printing post in saveConfig() : ";
-        var_dump($post);
-
         if(count($post)==0){
             $this->setRedirect('index.php?option=com_miniorange_oauth&view=accountsetup');
             return;
@@ -221,8 +218,20 @@ class miniorangeoauthControllerAccountSetup extends FormController
             $in_header               = isset($post['mo_oauth_in_header'])?$post['mo_oauth_in_header']:'';
             $enableOAuthLoginButton  = isset( $post['login_link_check']) ? $post['login_link_check'] : '0';
             $in_body                 = isset($post['mo_oauth_body'])?$post['mo_oauth_body']:'';
+            if(isset($post['mo_oauth_option']))
+            {
+                if($post['mo_oauth_option'] == 'body')
+                {
+                    $in_body = 1;
+                }
+                if($post['mo_oauth_option'] == 'header')
+                {
+                    $in_header = 1;
+                }
+            }
             $in_header_or_body       = "inHeader" ;
-            if($in_header=='1' && $in_body=='1')
+        
+            if($in_header=='1' && $in_body=='1' && $appname != 'okta')
             {
                 $in_header_or_body = "both";
             }
@@ -260,9 +269,6 @@ class miniorangeoauthControllerAccountSetup extends FormController
 
         
         $c_date = MoOauthCustomer::getAccountDetails();
-        
-        echo "\n getAccountDetails() in accountsetup.php = ";
-        var_dump($c_date);
 
         if($c_date['cd_plugin']==''){
 

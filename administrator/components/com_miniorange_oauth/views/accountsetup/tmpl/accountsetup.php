@@ -645,6 +645,7 @@ function configuration($OauthApp,$appLabel)
     {
         $guide="https://plugins.miniorange.com/guide-to-enable-joomla-oauth-client";
     }
+    
     $mo_oauth_app = $appLabel;
     $custom_app = "";
     $client_id = "";
@@ -667,27 +668,30 @@ function configuration($OauthApp,$appLabel)
             $mo_oauth_in_header = "checked=true";
             $mo_oauth_in_body   = "";
         }
-        else if( $attribute['in_header_or_body']=='both' ){
+        else if( $attribute['in_header_or_body']=='both'){
             $mo_oauth_in_header = "checked=true";
             $mo_oauth_in_body   = "checked=true";
         }
     }
     else
     {
-        if( isset($appData[$appLabel]) && $appData[$appLabel][0]=='both' ){
+        if( isset($appData[$appLabel]) && $appData[$appLabel][0]=='both'){
             $mo_oauth_in_header = "checked=true";
             $mo_oauth_in_body   = "checked=true";
         }
-        else if(isset($appData['appLabel']) && $appData['appLabel'][0]=='inBody' ){
+        else if(isset($appData['appLabel']) && $appData['appLabel'][0]=='body' ){
             $mo_oauth_in_header = "";
             $mo_oauth_in_body   = "checked=true";
         }
-        else if(isset($appData['appLabel']) && $appData['appLabel'][0]=='inHeader' )
+        else if(isset($appData['appLabel']) && $appData['appLabel'][0]=='header' )
         {
             $mo_oauth_in_header = "checked=true";
             $mo_oauth_in_body   = "";
         }
     }
+
+
+   
     if (isset($attribute['client_id'])) 
     {
         $mo_oauth_app = empty($attribute['appname'])?$appLabel:$attribute['appname'];
@@ -708,8 +712,8 @@ function configuration($OauthApp,$appLabel)
         $redirecturi = explode('//',Uri::root())[1];
         $attributesNames = explode(",",$attributesNames);
     }
-    // echo "/n printing attribute = ";
-    // var_dump($attribute);
+
+    
     $get =Factory::getApplication()->input->get->getArray();
     $progress = isset($get['progress'])?$get['progress']:"step1";
     ?>
@@ -1031,17 +1035,35 @@ function configuration($OauthApp,$appLabel)
                                         <?php }
                                     }
                                 ?>    
-                                <div class="row mt-3">
-                                    <div class="col-sm-3">
-                                        <b><?php echo Text::_('COM_MINIORANGE_OAUTH_SET_CLIENT_CREDENTIALS');?></b>
+                                <?php if($mo_oauth_app == "okta") { ?>
+                                    <div class="row mt-3">
+                                        <div class="col-sm-3">
+                                            <b><?php echo Text::_('COM_MINIORANGE_OAUTH_SET_CLIENT_CREDENTIALS'); ?></b>
+                                        </div>
+                                        <div class="form-check form-switch col-lg-2 col-sm-4 mx-4">
+                                            <input type="radio" class="mo_oauth_radio form-check-input" name="mo_oauth_option" id="mo_oauth_in_header" value="header" 
+                                            <?php echo ($mo_oauth_in_header == 'checked=true') ? 'checked' : ''; ?>>
+                                            &nbsp; <?php echo Text::_('COM_MINIORANGE_OAUTH_SET_CREDENTIAL_IN_HEADER'); ?>
+                                        </div>
+                                        <div class="form-check form-switch col-lg col-sm-3">
+                                            <input type="radio" class="mo_oauth_radio form-check-input" name="mo_oauth_option" id="mo_oauth_body" value="body" 
+                                            <?php echo ($mo_oauth_in_body == 'checked=true') ? 'checked' : ''; ?>>
+                                            &nbsp; <?php echo Text::_('COM_MINIORANGE_OAUTH_SET_CREDENTIAL_IN_BODY'); ?>
+                                        </div>
                                     </div>
-                                    <div class="form-check form-switch col-lg-2 col-sm-4 mx-4">
-                                        <input type="checkbox" class='mo_oauth_checkbox form-check-input' name="mo_oauth_in_header" value="1" <?php echo " ".$mo_oauth_in_header; ?>>&nbsp;<?php echo Text::_('COM_MINIORANGE_OAUTH_SET_CREDENTIAL_IN_HEADER');?>
+                                <?php } else { ?>
+                                    <div class="row mt-3">
+                                        <div class="col-sm-3">
+                                                <b><?php echo Text::_('COM_MINIORANGE_OAUTH_SET_CLIENT_CREDENTIALS');?></b>
+                                        </div>
+                                        <div class="form-check form-switch col-lg-2 col-sm-4 mx-4">
+                                            <input type="checkbox" class='mo_oauth_checkbox form-check-input' name="mo_oauth_in_header" id="mo_oauth_in_header" value="1" <?php echo " ".$mo_oauth_in_header ; ?> >&nbsp; <?php echo Text::_('COM_MINIORANGE_OAUTH_SET_CREDENTIAL_IN_HEADER');?>
+                                        </div>
+                                        <div class="form-check form-switch col-lg col-sm-3">
+                                                <input type="checkbox" class="mo_oauth_checkbox form-check-input" name="mo_oauth_body" id="mo_oauth_body" value="1" <?php echo " ".$mo_oauth_in_body ; ?> >&nbsp; <?php echo Text::_('COM_MINIORANGE_OAUTH_SET_CREDENTIAL_IN_BODY');?>
+                                        </div>
                                     </div>
-                                    <div class="form-check form-switch col-lg col-sm-3">
-                                        <input type="checkbox" class="mo_table_textbox mo_oauth_checkbox form-check-input" name="mo_oauth_body" value="1" <?php echo " ".$mo_oauth_in_body; ?> >&nbsp; <?php echo Text::_('COM_MINIORANGE_OAUTH_SET_CREDENTIAL_IN_BODY');?>
-                                    </div>
-                                </div>
+                                <?php } ?>
                             </div>
                         </div>
                     </form>        

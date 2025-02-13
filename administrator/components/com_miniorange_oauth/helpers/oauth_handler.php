@@ -17,8 +17,9 @@ class Mo_OAuth_Hanlder {
     	$this->error=$error;
     }
 
-    function getAccessToken($tokenendpoint, $grant_type, $clientid, $clientsecret, $code, $redirect_url,$in_header_or_body){
+    function getAccessToken($tokenendpoint, $grant_type, $clientid, $clientsecret, $code, $redirect_url, $in_header_or_body){
 		$session = Factory::getSession();
+       
 		$ch = curl_init($tokenendpoint);
 		curl_setopt( $ch, CURLOPT_FOLLOWLOCATION, true );
 		curl_setopt( $ch, CURLOPT_ENCODING, "" );
@@ -26,30 +27,44 @@ class Mo_OAuth_Hanlder {
 		curl_setopt( $ch, CURLOPT_AUTOREFERER, true );
 		curl_setopt( $ch, CURLOPT_SSL_VERIFYPEER, false );
 		curl_setopt( $ch, CURLOPT_MAXREDIRS, 10 );
-		curl_setopt( $ch, CURLOPT_POST, true);
-		
-		if($in_header_or_body=='both'){
+        curl_setopt( $ch, CURLOPT_POST, true);
+        curl_setopt( $ch, CURLOPT_VERBOSE, true);
+        
+		if($in_header_or_body=='both')
+        {
 			curl_setopt($ch, CURLOPT_HTTPHEADER, array(
 				'Accept: application/json',
+                'Content-Type: application/x-www-form-urlencoded',
 				'Authorization: Basic ' . base64_encode( $clientid . ":" . $clientsecret )
 			));
 			curl_setopt( $ch, CURLOPT_POSTFIELDS, 'redirect_uri='.urlencode($redirect_url).'&grant_type='.$grant_type.'&client_id='.urlencode($clientid).'&client_secret='.urlencode($clientsecret).'&code='.$code);
-
 		}
-		elseif($in_header_or_body=='inHeader'){
+		elseif($in_header_or_body == 'inHeader'){
 			curl_setopt($ch, CURLOPT_HTTPHEADER, array(
 				'Accept: application/json',
-				'Authorization: Basic ' . base64_encode( $clientid . ":" . $clientsecret )
+                'Content-Type: application/x-www-form-urlencoded',
+				'Authorization: Basic ' . base64_encode( $clientid . ':' . $clientsecret ),
 			));
-			curl_setopt( $ch, CURLOPT_POSTFIELDS, 'redirect_uri='.urlencode($redirect_url).'&grant_type='.$grant_type.'&code='.$code);
+
+            
+            $fields = array(
+                'redirect_uri' => $redirect_url,
+                'grant_type' => $grant_type,
+                'code' => $code
+            );
+
+            $field_string = json_encode($fields);
+            curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($fields));
 		}
 		else{
 			curl_setopt($ch, CURLOPT_HTTPHEADER, array(
                 'Accept: application/json'
             ));
+
             curl_setopt( $ch, CURLOPT_POSTFIELDS, 'redirect_uri='.urlencode($redirect_url).'&grant_type='.$grant_type.'&client_id='.$clientid.'&client_secret='.$clientsecret.'&code='.$code);
+           
 		}
-		
+
 		$content = curl_exec($ch);
 
 		if(curl_error($ch)){
@@ -59,6 +74,7 @@ class Mo_OAuth_Hanlder {
 		}
 
 		$content =json_decode($content, true);
+
 		if(!is_array($content))
         {
             $this->setError("Invalid response received.");
@@ -85,6 +101,8 @@ class Mo_OAuth_Hanlder {
 		
 		return array($access_token,$idToken);
 	}
+
+
 	function getResourceOwnerFromIdToken($id_token){
 		$session = Factory::getSession();
         $id_array = explode(".", $id_token);

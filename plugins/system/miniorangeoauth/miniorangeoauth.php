@@ -44,7 +44,6 @@ class plgSystemMiniorangeoauth extends JPlugin
                 {
                     $linkAddPlace="</button><br><a href = ".JURI::root()."?morequest=oauthredirect&app_name=".$applicationName."> Click Here For SSO ";
                     $body = str_replace('</button>', $linkAddPlace . '</a>', $body);
-                    var_dump($body);
                     $app->setBody($body);           
                 }
             }
@@ -58,8 +57,6 @@ class plgSystemMiniorangeoauth extends JPlugin
 
         if (isset($post['mojsp_feedback']))
         {
-            // echo "\n Printing Post Value in onAfterInitialise = ";
-            // var_dump($post);
            
             $radio = !empty($post['deactivate_plugin']) ? $post['deactivate_plugin'] : '';
             $data = !empty($post['query_feedback']) ? $post['query_feedback'] : '';
@@ -67,12 +64,10 @@ class plgSystemMiniorangeoauth extends JPlugin
             {
                 $data = 'Skipped';
             }
-            // var_dump($data);
-            // die();
+
             $current_user = JFactory::getUser();
             $feedback_email = !empty($post['feedback_email']) ? $post['feedback_email'] : $current_user->email;
-            // echo "\n Printing feedback email = ";
-            // var_dump($feedback_email);
+
             $fields = array(
                 'uninstall_feedback'=>1
             );
@@ -82,16 +77,12 @@ class plgSystemMiniorangeoauth extends JPlugin
 
             $this->miniOauthUpdateDb('#__miniorange_oauth_customer',$fields,$conditions);
             $customerResult=$this->miniOauthFetchDb('#__miniorange_oauth_customer',array('id'=>'1'));
-            // echo "\n Printing Customer Result = ";
-            // var_dump($customerResult);
 
         
             $admin_email = (isset($customerResult['email']) && !empty($customerResult['email'])) ? $customerResult['email'] : $feedback_email;
-            // echo "\n Printing admin email = ";
-            // var_dump($admin_email);
+           
             $admin_phone = $customerResult['admin_phone'];
-            // echo "\n Printing admin phone = ";
-            // var_dump($admin_phone);
+            
             
             $data1 = $radio . ' : ' . $data;
             require_once JPATH_BASE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_miniorange_oauth' . DIRECTORY_SEPARATOR . 'helpers' . DIRECTORY_SEPARATOR . 'mo_customer_setup.php';
@@ -133,18 +124,11 @@ class plgSystemMiniorangeoauth extends JPlugin
         else if (isset($get['morequest']) and $get['morequest'] == 'oauthredirect') 
         {
             $appname = $get['app_name'];
-            var_dump($get);
            
-            $appdata = $this->miniOauthFetchDb('#__miniorange_oauth_config', array('custom_app'=>$appname));
-            var_dump($appdata);
-            if($appdata['sso_enable'] == 0)
-            {
-                var_dump("Inside the redirection");
-                $app->redirect(JURI::root());
-                return;
-            }
+            // get Ouath configuration from database
+            
+            $appdata = $this->miniOauthFetchDb('#__miniorange_oauth_config', array('custom_app'=>$appname));            
 
-            // die();
             if (isset($get['test']))
                 setcookie("mo_oauth_test", true);
             else
@@ -158,17 +142,33 @@ class plgSystemMiniorangeoauth extends JPlugin
                 setcookie("returnurl", $loginredirurl);
             }
             
-            // get Ouath configuration from database
-            
-            $appdata = $this->miniOauthFetchDb('#__miniorange_oauth_config', array('custom_app'=>$appname));
             $session->set('appname', $appname);
             if(is_null($appdata))
+            {
                 $appdata = $this->miniOauthFetchDb('#__miniorange_oauth_config', array('appname'=>$appname));
-            
+            }
+           
             if(empty($appdata['client_id']) || empty($appdata['app_scope'])){
                 echo "<center><h3 style='color:indianred;border:1px dotted black;'>Sorry! client ID or Scope is empty.</h3></center>";
                 exit;
             }
+
+            if ($appdata['sso_enable'] == 0 and !isset($get['test'])) {
+                
+                $errMessage = 'SSO is disable. Please contact your administrator.';
+            
+                // Output the error message with a script to hide it after 5 seconds
+                echo '<div id="sso-disabled-alert" style="display: block; position: fixed; top: 20px; left: 50%; transform: translateX(-50%); background-color: #ffe3e3; color: #c00000; border: 1px solid #c00000; padding: 10px 80px; border-radius: 4px; z-index: 1000; text-align: center;">' . $errMessage . '</div>';
+                echo '<script>
+                    setTimeout(function(){
+                        var element = document.getElementById("sso-disabled-alert");
+                        if (element) {
+                            element.style.display = "none";
+                        }
+                    }, 3000); // 5000 milliseconds = 5 seconds
+                </script>';
+                return;
+            }            
 
             $state = base64_encode($appname);
             $authorizationUrl = $appdata['authorize_endpoint'];
@@ -181,6 +181,8 @@ class plgSystemMiniorangeoauth extends JPlugin
             if (session_id() == '' || !isset($session))
                 session_start();
             $session->set('oauth2state', $state);
+            
+
             header('Location: ' . $authorizationUrl);
             exit;
         } 
@@ -190,6 +192,7 @@ class plgSystemMiniorangeoauth extends JPlugin
         */
         else if (isset($get['code'])) 
         {
+            
             if (session_id() == '' || !isset($session))
                 session_start();
             try {
@@ -229,7 +232,7 @@ class plgSystemMiniorangeoauth extends JPlugin
                  * we may also get an ID token in openid flow
                  *
                  * */
-                list($accessToken,$idToken) = $mo_oauth_handler->getAccessToken
+                list($accessToken, $idToken) = $mo_oauth_handler->getAccessToken
                 ($currentapp['access_token_endpoint'], 'authorization_code',
                     $currentapp['client_id'], $currentapp['client_secret'], $get['code'], JURI::root(),$currentapp['in_header_or_body']);
                 $mo_oauth_handler->printError();
@@ -240,7 +243,7 @@ class plgSystemMiniorangeoauth extends JPlugin
                 if (substr($resourceownerdetailsurl, -1) == "=") {
                     $resourceownerdetailsurl .= $accessToken;
                 }
-                $resourceOwner = $mo_oauth_handler->getResourceOwner($resourceownerdetailsurl, $accessToken,$idToken);
+                $resourceOwner = $mo_oauth_handler->getResourceOwner($resourceownerdetailsurl, $accessToken, $idToken);
                 $mo_oauth_handler->printError();
                 list($email,$name)=$this->getEmailAndName($resourceOwner,$email_attr,$name_attr);
                 $checkUser = $this->get_user_from_joomla($email);
